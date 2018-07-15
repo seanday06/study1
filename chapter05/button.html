@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Form</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script>
+		const plus = function(e) {
+			const p = document.getElementById('p');
+            p.innerHTML = parseInt(p.innerHTML) + 1;
+		};
+
+		const reset = function() {
+			const p = document.getElementById('p');
+            p.innerHTML = 0;
+		}
+	</script>
+</head>
+
+<body>
+	<p id="p">0</p>
+	<button onclick="plus()" >+</button>
+	<button onclick="reset()" >reset</button>
+</body>
+
+</html>

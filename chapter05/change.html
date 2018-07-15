@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Form</title>
+	<link rel="stylesheet" type="text/css" href="../css/style.css" />
+	<script>
+		const onKeyUp = function(e) {
+			const x1 = document.getElementById('x1');
+			const p = document.getElementById('p');
+            p.innerHTML = x1.value.toUpperCase();
+		};
+	</script>
+</head>
+
+<body>
+	<input type="number" id="x1"  />
+	<span>+</span>
+	<input type="tel" id="x2"  />
+	<button onclick="sum()">=</button>
+	<p>0</p>
+	<textarea>안녕하세요.</textarea>
+</body>
+
+</html>

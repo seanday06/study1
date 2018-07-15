@@ -1,0 +1,20 @@
+body {
+    background: #eeeeee;
+}
+
+h1 {
+    color: #00f;
+    font-size: 40pt;
+}
+
+h2 {
+    color: #009999;
+}
+
+th, td {
+    border: solid 1px #999; 
+}
+
+img {
+    width: 300px;
+}
