@@ -5,42 +5,65 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<title>Form</title>
-	<link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        document.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            console.log('input', $('input[type=checkbox]:checked').val());
+            //console.log('input', $('input[type=checkbox]').each((doc) => doc.val()));
+        });
+    </script>
 </head>
 
 <body>
     <h1>폼</h1>
-    <div>
-        <input type="text" name="name" />
-    </div>
+    <form>
+        <div>
+            <p>1. 현재 자신이 가장 스트레스를 받는 요인은 무엇입니까? (최대 3가지)</p>
+            <input type="checkbox" name="flag1" value="외모" /> 1. 외모
+            <input type="checkbox" name="flag1" value="성적" /> 2. 성적
+            <input type="checkbox" name="flag1" value="대인 관계" /> 3. 대인 관계
+        </div>
 
-    <div>
-        <input type="radio" name="flag" /> 라디오
-        <input type="radio" name="flag" /> TV
-        <input type="radio" name="flag" /> 영화
-    </div>
+        <div>
+            <p>2. 위에서 선택한 항목의 이유를 작성해주세요.</p>
+            <div>
+                <span>1</span>
+                <input type="text" name="c1" />
+            </div>
+            <div>
+                <span>2</span>
+                <input type="text" name="c2" />
+            </div>
+            <div>
+                <span>3</span>
+                <input type="text" name="c3" />
+            </div>
+        </div>
 
-    <div>
-        <input type="checkbox" name="flag1" /> 라디오
-        <input type="checkbox" name="flag1" /> TV
-        <input type="checkbox" name="flag1" /> 영화
-    </div>
+        <div>
+            <p>3. 다음은 각 요인별 스트레스의 정도를 알아보기 위한 문항입니다. 자신의 상황에 맞는 정도의 번호를 선택해주시기 바랍니다.</p>
+            <div>
+                <span>자신의 외모 때문에 스트레스를 받는다.</span>
+                <input type="radio" name="d31" value="매우낮음" /> 매우 낮음
+                <input type="radio" name="d31" value="낮음" /> 낮음
+                <input type="radio" name="d31" value="보통" /> 보통
+                <input type="radio" name="d31" value="늪음" /> 높음
+                <input type="radio" name="d31" value="매우높음" /> 매우 높음
+            </div>
+        </div>
+
+        <div>
+            <p>4. 본인의 하루 평균 수면시간은?</p>
+            <input type="checkbox" name="flag1" value="6" /> 1. 6시간 미만
+            <input type="checkbox" name="flag1" value="7" /> 2. 6시간 이상 ~ 7시간 미만
+            <input type="checkbox" name="flag1" value="8" /> 3. 7시간 이상 ~ 8시간 미만
+        </div>
     
-    <div>
-        <select name="count" >
-            <option>1개</option>
-            <option>2개</option>
-            <option>3개</option>
-            <option>4개</option>
-            <option>5개</option>
-        </select>
-    </div>
-
-    <div>
-        <textarea name="content"></textarea>
-    </div>
-    
-    <button>확인</button>
+        <button>확인</button>
+    </form>
 </body>
 
 </html>
