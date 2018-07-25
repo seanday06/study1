@@ -23,13 +23,29 @@
             $('form').on('submit', function(e) {
                 e.preventDefault();
                 
-                console.log('submit');
+                console.log('submit invoked');
             });
 
-            $('input[type=checkbox]').change(function() {
-                console.log('on click event');
+            $('input.a1').change(function(e) {            
+                console.log('on click event', e.target.value);
+                console.log($(this).is(':checked') ? 'checked' : 'unchecked');
+                if ($('input.a1:checked').length > 3) {
+                    alert('최대 3개만 선택할 수 있어요.');
+                    this.checked = false;
+                    e.preventDefault();
+                    return;
+                }
+
+                if ($(this).is(':checked')) {
+                    $('#a1Items').append(`<div id="${e.target.id}"><span>${e.target.value}</span><input /></div>`);
+                } else {
+                    $(`#a1Items #${e.target.id}`).remove();
+                }
+
             });
         });
+
+        $('input').ready(function() {})
     </script>
 </head>
 
@@ -39,14 +55,14 @@
         <div class="question">
             <p class="text">1. 현재 자신이 가장 스트레스를 받는 요인은 무엇입니까? (최대 3가지)</p>
             <div class="answer">
-                <input type="checkbox" name="a1" value="외모" /> 1. 외모
-                <input type="checkbox" name="a1" value="성적" /> 2. 성적
-                <input type="checkbox" name="a1" value="대인 관계" /> 3. 대인 관계
-                <input type="checkbox" name="a1" value="진로" /> 4. 진로
-                <input type="checkbox" name="a1" value="학교(수업)" /> 5. 학교(수업)
-                <input type="checkbox" name="a1" value="학원" /> 6. 학원
-                <input type="checkbox" name="a1" value="숙제" /> 7. 숙제
-                <input type="checkbox" name="a1" value="인터넷/게임" /> 8. 인터넷/게임
+                <input type="checkbox" id="shape" class="a1" name="a1" value="외모" /> 1. 외모
+                <input type="checkbox" id="grade" class="a1" name="a1" value="성적" /> 2. 성적
+                <input type="checkbox" id="relationship" class="a1" name="a1" value="대인관계" /> 3. 대인 관계
+                <input type="checkbox" id="doing" class="a1" name="a1" value="진로" /> 4. 진로
+                <input type="checkbox" id="class" class="a1" name="a1" value="학교(수업)" /> 5. 학교(수업)
+                <input type="checkbox" id="institute" class="a1" name="a1" value="학원" /> 6. 학원
+                <input type="checkbox" id="homework" class="a1" name="a1" value="숙제" /> 7. 숙제
+                <input type="checkbox" id="internet" class="a1" name="a1" value="인터넷/게임" /> 8. 인터넷/게임
             </div>
             <div class="remarks">
                 <p>과제 요구사항</p>
@@ -60,19 +76,7 @@
 
         <div class="question">
             <p class="text">2. 위에서 선택한 항목의 이유를 작성해주세요.</p>
-            <div class="answer">
-                <div>
-                    <span>1</span>
-                    <input type="text" name="a21" />
-                </div>
-                <div>
-                    <span>2</span>
-                    <input type="text" name="a22" />
-                </div>
-                <div>
-                    <span>3</span>
-                    <input type="text" name="a23" />
-                </div>
+            <div id="a1Items" class="answer">
             </div>
         </div>
 
