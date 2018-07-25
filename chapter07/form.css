@@ -1,0 +1,19 @@
+.question {
+    width: 50%;
+    min-width: 300px;
+    margin: 20px 0;
+}
+
+.question + .question {
+    border-top: dotted 1px #ccc;
+}
+
+.remarks {
+    padding: 10px;
+    border: solid 1px #ccc;
+}
+
+.btn-block {
+    width: 100%;
+    padding: 10px 0 8px;
+}

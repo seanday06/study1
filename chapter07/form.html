@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Form</title>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="./form.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        /*
+        document.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            console.log('input', $('input[type=checkbox]:checked').val());
+            //console.log('input', $('input[type=checkbox]').each((doc) => doc.val()));
+        });
+        */
+        $(document).ready(function() {
+            console.log('jquery', $('form'));
+
+            $('form').on('submit', function(e) {
+                e.preventDefault();
+                
+                console.log('submit');
+            });
+
+            $('input[type=checkbox]').change(function() {
+                console.log('on click event');
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <h1>폼</h1>
+    <form>
+        <div class="question">
+            <p class="text">1. 현재 자신이 가장 스트레스를 받는 요인은 무엇입니까? (최대 3가지)</p>
+            <div class="answer">
+                <input type="checkbox" name="a1" value="외모" /> 1. 외모
+                <input type="checkbox" name="a1" value="성적" /> 2. 성적
+                <input type="checkbox" name="a1" value="대인 관계" /> 3. 대인 관계
+                <input type="checkbox" name="a1" value="진로" /> 4. 진로
+                <input type="checkbox" name="a1" value="학교(수업)" /> 5. 학교(수업)
+                <input type="checkbox" name="a1" value="학원" /> 6. 학원
+                <input type="checkbox" name="a1" value="숙제" /> 7. 숙제
+                <input type="checkbox" name="a1" value="인터넷/게임" /> 8. 인터넷/게임
+            </div>
+            <div class="remarks">
+                <p>과제 요구사항</p>
+                <ul>
+                    <li>3개를 초과하여 선택하면 경고 알림을 보여주고 선택을 하지 않는다.</li>
+                    <li>항목을 선택하는 순간, 아래 다음 문제의 예문 앞에 선택 요인을 보여준다.</li>
+                    <li>선택한 항목 갯수만큼 아래 문제의 예문을 구성한다.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="question">
+            <p class="text">2. 위에서 선택한 항목의 이유를 작성해주세요.</p>
+            <div class="answer">
+                <div>
+                    <span>1</span>
+                    <input type="text" name="a21" />
+                </div>
+                <div>
+                    <span>2</span>
+                    <input type="text" name="a22" />
+                </div>
+                <div>
+                    <span>3</span>
+                    <input type="text" name="a23" />
+                </div>
+            </div>
+        </div>
+
+        <div class="question">
+            <p class="text">3. 다음은 각 요인별 스트레스의 정도를 알아보기 위한 문항입니다. 자신의 상황에 맞는 정도의 번호를 선택해주시기 바랍니다.</p>
+            <div class="answer">
+                <span>자신의 외모 때문에 스트레스를 받는다.</span>
+                <input type="radio" name="d31" value="매우낮음" /> 매우 낮음
+                <input type="radio" name="d31" value="낮음" /> 낮음
+                <input type="radio" name="d31" value="보통" /> 보통
+                <input type="radio" name="d31" value="늪음" /> 높음
+                <input type="radio" name="d31" value="매우높음" /> 매우 높음
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. 본인의 하루 평균 수면시간은?</p>
+            <input type="checkbox" name="flag1" value="6" /> 1. 6시간 미만
+            <input type="checkbox" name="flag1" value="7" /> 2. 6시간 이상 ~ 7시간 미만
+            <input type="checkbox" name="flag1" value="8" /> 3. 7시간 이상 ~ 8시간 미만
+        </div>
+    
+        <button type="submit" class="btn btn-block">확인</button>
+    </form>
+</body>
+
+</html>
