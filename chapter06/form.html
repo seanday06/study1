@@ -18,8 +18,9 @@
 </head>
 
 <body>
-    <h1>폼</h1>
+    <h1>스트레스 조사 설문지</h1>
     <form>
+        <h2>스트레스 현황</h2>  
         <div>
             <p>1. 현재 자신이 가장 스트레스를 받는 요인은 무엇입니까? (최대 3가지)</p>
             <input type="checkbox" name="flag1" value="외모" /> 1. 외모
@@ -68,8 +69,78 @@
             <input type="checkbox" name="flag1" value="6" /> 1. 6시간 미만
             <input type="checkbox" name="flag1" value="7" /> 2. 6시간 이상 ~ 7시간 미만
             <input type="checkbox" name="flag1" value="8" /> 3. 7시간 이상 ~ 8시간 미만
+            <input type="checkbox" name "flag1" value="9" /> 4. 8시간 이상 ~ 9시간 미만
+            <input type="checkbox" name "flag1" value="10" /> 5. 9시간 이상
         </div>
     
+        <div>
+            <p>5. 본인의 하루 자유시간은?</p>
+            <input type="checkbox" name="flag2" value="1" /> 1. 1시간 미만
+            <input type="checkbox" name="flag2" value="2" /> 2. 1시간 이상 ~ 2시간 미만
+            <input type="checkbox" name="flag2" value="3" /> 3. 2시간 이상 ~ 3시간 미만
+            <input type="checkbox" name "flag2" value="4" /> 4. 3시간 이상 ~ 4시간 미만
+            <input type="checkbox" name "flag2" value="5" /> 5. 4시간 이상
+        </div>
+        
+        <div>
+            <p>6. 본인의 성적 수준은?</p>
+            <input type="radio" name="d31" value="매우낮음" /> 매우 낮음
+            <input type="radio" name="d31" value="낮음" /> 낮음
+            <input type="radio" name="d31" value="보통" /> 보통
+            <input type="radio" name="d31" value="늪음" /> 높음
+            <input type="radio" name="d31" value="매우높음" /> 매우 높음
+        </div>
+        <h2>스트레스 대처</h2>
+        <div>
+            <p>1.위에서 응답한 스트레스를 받았을 경우 어떤 방법으로 스트레스를 푸는지 선택해주세요.(중복선택 가능)</p>
+            <input type="checkbox" name="flag3" value="음식섭취" /> 1. 음식섭취
+            <input type="checkbox" name="flag3" value="쇼핑" /> 2. 쇼핑
+            <input type="checkbox" name="flag3" value="노래" /> 3. 노래
+            <input type="checkbox" name "flag3" value="악기 연주" /> 4. 악기 연주
+            <input type="checkbox" name "flag3" value="잠" /> 5. 잠
+            <input type="checkbox" name="flag3" value="청소" /> 6. 청소
+            <input type="checkbox" name="flag3" value="그림" /> 7. 그림
+            <input type="checkbox" name="flag3" value="명상" /> 8. 명상
+            <input type="checkbox" name "flag3" value="게임" /> 9. 게임
+            <input type="checkbox" name "flag3" value="인터넷" /> 10. 인터넷
+            <input type="checkbox" name="flag3" value="1" /> 11. 운동
+            <input type="checkbox" name="flag3" value="2" /> 12. 독서
+            <input type="checkbox" name="flag3" value="3" /> 13. 수다
+            <input type="checkbox" name "flag3" value="4" /> 14. 음악 감상
+            <input type="checkbox" name "flag3" value="5" /> 15. 기타
+            <span>방법:</span>
+                <input type="text" name="c4" />
+        </div>
+        <p>2.만약 스트레스를 해소 해주는 앱이나 프로그램이 있다면 어떤 기능이 있었으면 좋겠나요? (최대 3가지)</p>
+            <input type="checkbox" name="flag4" value="음식 추천" /> 1. 음식 추천
+            <input type="checkbox" name="flag4" value="쇼핑 추천" /> 2. 쇼핑 추천
+            <input type="checkbox" name="flag4" value="음악 감상" /> 3.음악 감상
+            <input type="checkbox" name="flag4" value="수면 유도" /> 4. 수면유도
+            <input type="checkbox" name="flag4" value="명상" /> 5. 명상
+            <input type="checkbox" name="flag4" value="게임" /> 6. 게임
+            <input type="checkbox" name="flag4" value="운동" /> 7. 운동
+            <input type="checkbox" name="flag4" value="스케쥴 설계" /> 8. 스케쥴 설계
+            
+            
+        </div>
+
+        <div>
+            <p>3. 위에서 선택한 항목의 이유를 작성해주세요.</p>
+            <div>
+                <span>1</span>
+                <input type="text" name="c5" />
+            </div>
+            <div>
+                <span>2</span>
+                <input type="text" name="c6" />
+            </div>
+            <div>
+                <span>3</span>
+                <input type="text" name="c7" />
+            </div>
+        </div>
+        <h3>오랜 시간 설문에 응답해주셔서 감사드립니다.</h3>
+        <h3>소중한 자료로 사용하겠습니다.</h3>
         <button>확인</button>
     </form>
 </body>
