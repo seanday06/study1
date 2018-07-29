@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="../css/style.css" />
     <link rel="stylesheet" type="text/css" href="./form.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.12.0/validate.min.js"></script>
     <script>
         /*
         document.addEventListener("submit", (e) => {
@@ -23,7 +24,10 @@
             $('form').on('submit', function(e) {
                 e.preventDefault();
                 
-                console.log('submit invoked');
+                const data = $(this).serializeArray();
+                const a1 = $('input[name=a1]:checked').map(doc => doc.value);
+                const a2 = $('input[name=a2]').map(doc => doc.value);
+                console.log('submit data', data);
             });
 
             $('input.a1').change(function(e) {            
@@ -37,11 +41,12 @@
                 }
 
                 if ($(this).is(':checked')) {
-                    $('#a1Items').append(`<div id="${e.target.id}"><span>${e.target.value}</span><input /></div>`);
+                    $('#a1Items').append(
+                        `<div id="${e.target.id}"><label>${e.target.value}</label><input name="a2" /></div>`
+                    );
                 } else {
                     $(`#a1Items #${e.target.id}`).remove();
                 }
-
             });
         });
 
@@ -84,19 +89,19 @@
             <p class="text">3. 다음은 각 요인별 스트레스의 정도를 알아보기 위한 문항입니다. 자신의 상황에 맞는 정도의 번호를 선택해주시기 바랍니다.</p>
             <div class="answer">
                 <span>자신의 외모 때문에 스트레스를 받는다.</span>
-                <input type="radio" name="d31" value="매우낮음" /> 매우 낮음
-                <input type="radio" name="d31" value="낮음" /> 낮음
-                <input type="radio" name="d31" value="보통" /> 보통
-                <input type="radio" name="d31" value="늪음" /> 높음
-                <input type="radio" name="d31" value="매우높음" /> 매우 높음
+                <input type="radio" name="a3" value="매우낮음" /> 매우 낮음
+                <input type="radio" name="a3" value="낮음" /> 낮음
+                <input type="radio" name="a3" value="보통" /> 보통
+                <input type="radio" name="a3" value="늪음" /> 높음
+                <input type="radio" name="a3" value="매우높음" /> 매우 높음
             </div>
         </div>
 
         <div class="question">
             <p>4. 본인의 하루 평균 수면시간은?</p>
-            <input type="checkbox" name="flag1" value="6" /> 1. 6시간 미만
-            <input type="checkbox" name="flag1" value="7" /> 2. 6시간 이상 ~ 7시간 미만
-            <input type="checkbox" name="flag1" value="8" /> 3. 7시간 이상 ~ 8시간 미만
+            <input type="checkbox" name="a4" value="6" /> 1. 6시간 미만
+            <input type="checkbox" name="a4" value="7" /> 2. 6시간 이상 ~ 7시간 미만
+            <input type="checkbox" name="a4" value="8" /> 3. 7시간 이상 ~ 8시간 미만
         </div>
     
         <button type="submit" class="btn btn-block">확인</button>

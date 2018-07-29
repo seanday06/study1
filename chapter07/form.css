@@ -16,4 +16,17 @@
 .btn-block {
     width: 100%;
     padding: 10px 0 8px;
+    border: solid 1px #ccc;
+    border-radius: 5px;
+}
+
+#a1Items > div {
+    margin: 5px 0;
+}
+
+#a1Items label {
+    display: inline-block;
+    width: 100px;
+    padding-right: 10px;
+    text-align: right;
 }
