@@ -24,15 +24,12 @@
             $('form').on('submit', function(e) {
                 e.preventDefault();
                 
+                const object = {};
                 const data = $(this).serializeArray();
-                const a1 = $('input[name=a1]:checked').map(doc => doc.value);
-                const a2 = $('input[name=a2]').map(doc => doc.value);
                 console.log('submit data', data);
             });
 
             $('input.a1').change(function(e) {            
-                console.log('on click event', e.target.value);
-                console.log($(this).is(':checked') ? 'checked' : 'unchecked');
                 if ($('input.a1:checked').length > 3) {
                     alert('최대 3개만 선택할 수 있어요.');
                     this.checked = false;
