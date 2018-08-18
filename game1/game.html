@@ -28,10 +28,10 @@
         let y = ballRadius;
         let dx = 2;
         let dy = 2;
+        let speed = 1;
 
         const drawBall = () => {
             ctx.beginPath();
-            console.log('x, y = ', { x, y })
             ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
             ctx.fillStyle = "#FF0000";
             ctx.fill();
@@ -44,12 +44,12 @@
             drawBall();
 
             if (x + dx < ballRadius || x + dx > 480-ballRadius) {
-                dx = -2 * dx;
-                dy = 2 * dy;
+                dx = -speed * dx;
+                dy = speed * dy;
             }
             if (y + dy < ballRadius || y + dy > 320-ballRadius) {
-                dx = 2 * dx;
-                dy = -2 * dy;
+                dx = speed * dx;
+                dy = -speed * dy;
             }
 
             x = x + dx;
