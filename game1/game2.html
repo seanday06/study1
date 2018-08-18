@@ -109,13 +109,14 @@
             if (y + dy < ballRadius) {
                 dx = speed * dx;
                 dy = -speed * dy;
-            } else if (y + dy > canvas.height - ballRadius) {
-                if (x > paddleX && x < paddleX + paddleWidth) {
-                    dx = speed * dx;
-                    dy = -speed * dy;
-                } else {
-                    gameOver();
-                }
+            }
+            if (y + dy > canvas.height - ballRadius - paddleHeight && 
+                x > paddleX && x < paddleX + paddleWidth) {
+                dx = speed * dx;
+                dy = -speed * dy;
+            }
+            if (y + dy > canvas.height + ballRadius) {
+                gameOver();
             }
             x = x + dx;
             y = y + dy;
