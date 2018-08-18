@@ -7,6 +7,11 @@
         h1, p {
             text-align: center;
         }
+        button {
+            display: block;
+            margin: 0 auto;
+            text-align: center;
+        }
         canvas {
             display: block;
             margin: 20px auto;
@@ -17,20 +22,22 @@
 <body>
     <h1>벽돌깨기 게임</h1>
     <p id="message">게임 시작</p>
+    <button id="start" onclick="gameStart();">시작</button>
 
     <canvas id="myCanvas" width="480" height="320"></canvas>
 
     <script>
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
-
-        let gameOn = true;
+        let gameOn = false;
+        let gameHandle;
 
         const ballRadius = 10;
+        const BALL_SPEED = 2;
         let x = ballRadius;
         let y = ballRadius;
-        let dx = 2;
-        let dy = 2;
+        let dx = BALL_SPEED;
+        let dy = BALL_SPEED;
         let speed = 1;
 
         const paddleWidth = 80;
@@ -80,6 +87,15 @@
         document.addEventListener('keyup', keyUpHandler, false);
         document.addEventListener('wheel', mouseWheelHandler, { passive: true });
 
+        const gameStart = () => {
+            x = y = ballRadius;
+            dx = dy = BALL_SPEED;
+            gameHandle = setInterval(draw, 10);
+            
+            document.getElementById('message').innerHTML = '게임 시작';
+            document.getElementById('start').disabled = true;
+        };
+
         const gameOver = () => {
             gameOn = false;
             if (gameHandle) {
@@ -88,6 +104,7 @@
             }
 
             document.getElementById('message').innerHTML = '게임 오버';
+            document.getElementById('start').disabled = false;
         };
 
         const draw = () => {
@@ -121,9 +138,6 @@
             x = x + dx;
             y = y + dy;
         };
-
-        let gameHandle = setInterval(draw, 10);
-
     </script>
 </body>
 </html>
