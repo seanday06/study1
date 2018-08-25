@@ -61,12 +61,7 @@
         const brickOffsetTop = 30;
         const brickOffsetLeft = 30;
         const bricks = [];
-        for (let c = 0; c < brickColumnCount; c++) {
-            bricks[c] = [];
-            for (let r = 0; r < brickRowCount; r++) {
-                bricks[c][r] = { x: 0, y: 0 };
-            }
-        }
+        let bricksCount = 0;
 
         const drawBall = () => {
             ctx.beginPath();
@@ -140,6 +135,12 @@
                         if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
                             dy = -dy;
                             b.removed = true;
+                            bricksCount--;
+
+                            if (bricksCount === 0) {
+                                gameOver(true);
+                                break;
+                            }
                         }
                     }
                 }
@@ -154,27 +155,26 @@
             gameHandle = setInterval(draw, 10);
 
             for (let c = 0; c < brickColumnCount; c++) {
+                bricks[c] = [];
                 for (let r = 0; r < brickRowCount; r++) {
-                    let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
-                    let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
-                    bricks[c][r].x = brickX;
-                    bricks[c][r].y = brickY;
-                    bricks[c][r].removed = false;
+                    bricks[c][r] = { x: 0, y: 0, removed: false };
                 }
             }
+
+            bricksCount = brickColumnCount * brickRowCount;
 
             document.getElementById('message').innerHTML = '게임 시작';
             document.getElementById('start').disabled = true;
         };
 
-        const gameOver = () => {
+        const gameOver = (win) => {
             gameOn = false;
             if (gameHandle) {
                 clearInterval(gameHandle);
                 gameHandle = null;
             }
 
-            document.getElementById('message').innerHTML = '게임 오버';
+            document.getElementById('message').innerHTML = win ? '게임 승리' : '게임 오버';
             document.getElementById('start').disabled = false;
         };
 
@@ -210,7 +210,7 @@
                 dy = -accel * dy;
             }
             if (y + dy > canvas.height + ballRadius) {
-                gameOver();
+                gameOver(false);
             }
             x = x + dx;
             y = y + dy;
