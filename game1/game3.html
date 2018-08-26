@@ -71,6 +71,7 @@
         const brickOffsetLeft = 30;
         const bricks = [];
         let bricksCount = 0;
+        const audio = new Audio('beep.mp3');
 
         const drawBall = () => {
             ctx.beginPath();
@@ -144,6 +145,7 @@
                     // calculations
                     if (!b.removed) {
                         if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                            audio.play();
                             dy = -dy;
                             b.removed = true;
                             bricksCount--;
