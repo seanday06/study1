@@ -7,9 +7,14 @@
         h1, p {
             text-align: center;
         }
-        button {
-            display: block;
-            margin: 0 auto;
+        #board {
+            position: relative;
+            text-align: center;
+        }
+        #board #level {
+            margin: 0 10px;
+        }
+        #board button {
             text-align: center;
         }
         canvas {
@@ -22,18 +27,22 @@
 <body>
     <h1>벽돌깨기 게임</h1>
     <p id="message">게임 시작</p>
-    <button id="start" onclick="gameStart();">시작</button>
+    <div id="board">
+        <span id="level"></span>
+        <button id="start" onclick="gameStart();">시작</button>
+    </div>
 
     <canvas id="myCanvas" width="480" height="400"></canvas>
 
     <script>
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
+        let gameLevel = 1;
         let gameOn = false;
         let gameHandle;
 
         const ballRadius = 10;
-        const BALL_SPEED = 2;
+        const BALL_SPEED = 2 + 0.1 * gameLevel;
         let x = ballRadius;
         let y = ballRadius;
         let dx = BALL_SPEED;
@@ -106,7 +115,9 @@
         document.addEventListener('keydown', keyDownHandler, false);
         document.addEventListener('keyup', keyUpHandler, false);
         document.addEventListener('wheel', mouseWheelHandler, { passive: true });
-        document.addEventListener('touchmove', touchHandler, false);
+        canvas.addEventListener('touchmove', touchHandler, false);
+
+        document.getElementById('level').innerHTML = `LEVEL ${gameLevel}`;
 
         const drawBricks = () => {
             for (let c = 0; c < brickColumnCount; c++) {
@@ -176,7 +187,13 @@
                 gameHandle = null;
             }
 
-            document.getElementById('message').innerHTML = win ? '게임 승리' : '게임 오버';
+            if (win) {
+                document.getElementById('message').innerHTML = '게임 승리';
+                gameLevel++;
+                document.getElementById('level').innerHTML = `LEVEL ${gameLevel}`;
+            } else {
+                document.getElementById('message').innerHTML = '게임 오버';
+            }
             document.getElementById('start').disabled = false;
         };
 
