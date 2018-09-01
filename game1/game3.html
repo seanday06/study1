@@ -126,7 +126,7 @@
         canvas.addEventListener('touchmove', touchHandler, false);
 
         document.getElementById('level').innerHTML = `LEVEL ${gameLevel}`;
-        document.getElementById('point').innerHTML = gamePoint;
+        document.getElementById('point').innerHTML = `POINT ${gamePoint}`;
 
         const drawBricks = () => {
             for (let c = 0; c < brickColumnCount; c++) {
@@ -158,7 +158,7 @@
                             b.removed = true;
                             bricksCount--;
                             gamePoint += b.point;
-                            document.getElementById('point').innerHTML = gamePoint;
+                            document.getElementById('point').innerHTML = `POINT ${gamePoint}`;
 
                             if (bricksCount === 0) {
                                 gameOver(true);
