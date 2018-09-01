@@ -75,9 +75,9 @@
         let bricksCount = 0;
         const audio = new Audio('beep.mp3');
         const brickColors = [
-            'FF0000',
-            'FF6666',
-            'FFCCCC',
+            '#d26013',
+            '#e28033',
+            '#f2a053',
         ];
 
         const drawBall = () => {
@@ -138,6 +138,7 @@
                         bricks[c][r].y = brickY;
                         ctx.beginPath();
                         ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                        console.log('brickColor', { r, color: brickColors[r] });
                         ctx.fillStyle = brickColors[r];
                         ctx.fill();
                         ctx.closePath();
