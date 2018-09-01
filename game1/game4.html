@@ -211,6 +211,61 @@
         document.getElementById('level').innerHTML = `LEVEL ${gameLevel}`;
         document.getElementById('point').innerHTML = `POINT ${gamePoint}`;
 
+        const draw = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // move paddle to right or left
+            if (rightPressed && paddleX < canvas.width-paddleWidth) {
+                paddleX += DELTA_X;
+            } else if (leftPressed && paddleX > 0) {
+                paddleX -= DELTA_X;
+            }
+
+            // bounce ball on side wall
+            if (x + dx < ballRadius || x + dx > canvas.width - ballRadius) {
+                dx = -accel * dx;
+                dy = accel * dy;
+                colorIndex++;
+                colorIndex %= ballColors.length;
+            }
+
+            // bounce ball on ceiling
+            if (y + dy < ballRadius) {
+                dx = accel * dx;
+                dy = -accel * dy;
+                colorIndex++;
+                colorIndex %= ballColors.length;
+            }
+
+            // bounce ball on paddle
+            if (y + dy > canvas.height - ballRadius - paddleHeight && 
+                x > paddleX && x < paddleX + paddleWidth) {
+                const angle = 6 * ((x - paddleX) / paddleWidth - 0.5);
+                console.log('angle', angle);
+                dx = accel * Math.abs(dx) * angle;
+                dy = -accel * dy;
+            }
+
+            // game over if missed
+            if (y + dy > canvas.height + ballRadius) {
+                gameOver(false);
+            }
+
+            // next position of the ball
+            x = x + dx;
+            y = y + dy;
+            
+            collisionDetection();
+            drawBricks();
+            drawPaddle();
+            drawBall();
+
+            // animate
+            if (gameStatus === 'on') {
+                requestAnimationFrame(draw);
+            }
+        };
+
         const gameReady = () => {
             x = ballRadius;
             y = canvas.height - ballRadius;
@@ -267,61 +322,6 @@
                 document.getElementById('message').innerHTML = '게임 오버';
             }
             document.getElementById('start').disabled = false;
-        };
-
-        const draw = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // move paddle to right or left
-            if (rightPressed && paddleX < canvas.width-paddleWidth) {
-                paddleX += DELTA_X;
-            } else if (leftPressed && paddleX > 0) {
-                paddleX -= DELTA_X;
-            }
-
-            // bounce ball on side wall
-            if (x + dx < ballRadius || x + dx > canvas.width - ballRadius) {
-                dx = -accel * dx;
-                dy = accel * dy;
-                colorIndex++;
-                colorIndex %= ballColors.length;
-            }
-
-            // bounce ball on ceiling
-            if (y + dy < ballRadius) {
-                dx = accel * dx;
-                dy = -accel * dy;
-                colorIndex++;
-                colorIndex %= ballColors.length;
-            }
-
-            // bounce ball on paddle
-            if (y + dy > canvas.height - ballRadius - paddleHeight && 
-                x > paddleX && x < paddleX + paddleWidth) {
-                const angle = 6 * ((x - paddleX) / paddleWidth - 0.5);
-                console.log('angle', angle);
-                dx = accel * Math.abs(dx) * angle;
-                dy = -accel * dy;
-            }
-
-            // game over if missed
-            if (y + dy > canvas.height + ballRadius) {
-                gameOver(false);
-            }
-
-            // next position of the ball
-            x = x + dx;
-            y = y + dy;
-            
-            collisionDetection();
-            drawBricks();
-            drawPaddle();
-            drawBall();
-
-            // animate
-            if (gameStatus === 'on') {
-                requestAnimationFrame(draw);
-            }
         };
 
         gameReady();
