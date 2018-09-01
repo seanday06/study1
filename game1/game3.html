@@ -51,9 +51,11 @@
         let dy = BALL_SPEED;
         let accel = 1;
         const ballColors = [
-            "#FF0000",
-            "#555555",
-            "#99CCFF",
+            "#720000",
+            "#960000",
+            "#a70000",
+            "#ce0000",
+            "#ff0000",
         ];
         let colorIndex = 0;
 
@@ -96,38 +98,6 @@
             ctx.closePath();
         };
 
-        const keyDownHandler = (e) => {
-            if (e.keyCode === 39) {
-                rightPressed = true;
-            } else if (e.keyCode === 37) {
-                leftPressed = true;
-            }
-        };
-
-        const keyUpHandler = (e) => {
-            if (e.keyCode === 39) {
-                rightPressed = false;
-            } else if (e.keyCode === 37) {
-                leftPressed = false;
-            }
-        };
-
-        const mouseWheelHandler = (e) => {
-            paddleX = Math.min(canvas.width - paddleWidth, Math.max(0, paddleX - e.deltaX));
-        };
-
-        const touchHandler = (e) => {
-            paddleX = Math.min(canvas.width - paddleWidth, Math.max(0, paddleX - e.deltaX));
-        };
-
-        document.addEventListener('keydown', keyDownHandler, false);
-        document.addEventListener('keyup', keyUpHandler, false);
-        document.addEventListener('wheel', mouseWheelHandler, { passive: true });
-        canvas.addEventListener('touchmove', touchHandler, false);
-
-        document.getElementById('level').innerHTML = `LEVEL ${gameLevel}`;
-        document.getElementById('point').innerHTML = `POINT ${gamePoint}`;
-
         const drawBricks = () => {
             for (let c = 0; c < brickColumnCount; c++) {
                 for (let r = 0; r < brickRowCount; r++) {
@@ -138,7 +108,6 @@
                         bricks[c][r].y = brickY;
                         ctx.beginPath();
                         ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                        console.log('brickColor', { r, color: brickColors[r] });
                         ctx.fillStyle = brickColors[r];
                         ctx.fill();
                         ctx.closePath();
@@ -171,13 +140,44 @@
             }
         }
 
+        const keyDownHandler = (e) => {
+            if (e.keyCode === 39) {
+                rightPressed = true;
+            } else if (e.keyCode === 37) {
+                leftPressed = true;
+            }
+        };
+
+        const keyUpHandler = (e) => {
+            if (e.keyCode === 39) {
+                rightPressed = false;
+            } else if (e.keyCode === 37) {
+                leftPressed = false;
+            }
+        };
+
+        const mouseWheelHandler = (e) => {
+            paddleX = Math.min(canvas.width - paddleWidth, Math.max(0, paddleX - e.deltaX));
+        };
+
+        const touchHandler = (e) => {
+            paddleX = Math.min(canvas.width - paddleWidth, Math.max(0, paddleX - e.deltaX));
+        };
+
+        document.addEventListener('keydown', keyDownHandler, false);
+        document.addEventListener('keyup', keyUpHandler, false);
+        document.addEventListener('wheel', mouseWheelHandler, { passive: true });
+        canvas.addEventListener('touchmove', touchHandler, false);
+
+        document.getElementById('level').innerHTML = `LEVEL ${gameLevel}`;
+        document.getElementById('point').innerHTML = `POINT ${gamePoint}`;
+
         const gameStart = () => {
             gameOn = true;
             x = ballRadius;
             y = canvas.height - ballRadius;
             dx = BALL_SPEED;
             dy = -BALL_SPEED;
-            // gameHandle = setInterval(draw, 10);
             gameHandle = setTimeout(draw, 10);
 
             for (let c = 0; c < brickColumnCount; c++) {
@@ -219,41 +219,52 @@
 
         const draw = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            drawBricks();
-            drawPaddle();
-            drawBall();
-            collisionDetection();
 
+            // move paddle to right or left
             if (rightPressed && paddleX < canvas.width-paddleWidth) {
                 paddleX += DELTA_X;
             } else if (leftPressed && paddleX > 0) {
                 paddleX -= DELTA_X;
             }
 
+            // bounce ball on side wall
             if (x + dx < ballRadius || x + dx > canvas.width - ballRadius) {
                 dx = -accel * dx;
                 dy = accel * dy;
                 colorIndex++;
-                colorIndex %= 3;
+                colorIndex %= ballColors.length;
             }
+
+            // bounce ball on ceiling
             if (y + dy < ballRadius) {
                 dx = accel * dx;
                 dy = -accel * dy;
                 colorIndex++;
-                colorIndex %= 3;
+                colorIndex %= ballColors.length;
             }
+
+            // bounce ball on paddle
             if (y + dy > canvas.height - ballRadius - paddleHeight && 
                 x > paddleX && x < paddleX + paddleWidth) {
                 dx = accel * dx;
                 dy = -accel * dy;
             }
+
+            // game over if missed
             if (y + dy > canvas.height + ballRadius) {
                 gameOver(false);
             }
+
+            // next position of the ball
             x = x + dx;
             y = y + dy;
+            
+            collisionDetection();
+            drawBricks();
+            drawPaddle();
+            drawBall();
 
+            // animate
             if (gameOn) {
                 requestAnimationFrame(draw);
             }
