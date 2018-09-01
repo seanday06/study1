@@ -4,37 +4,65 @@
     <meta charset="utf-8" />
     <title>Gamedev Canvas Workshop</title>
     <style>
+        body {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            overflow: hidden;
+        }
         h1, p {
             text-align: center;
         }
         #board {
             position: relative;
-            text-align: center;
+            width: 480px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        #board #level, #board #point {
+            position: absolute;
+            top: 0;
+            font-size: 1.5em;
+            font-weight: bold;
         }
         #board #level {
-            margin: 0 10px;
+            left: 0;
         }
-        #board button {
-            text-align: center;
+        #board #point {
+            right: 0;
+            color: #ff0000;
         }
+
         canvas {
             display: block;
-            margin: 20px auto;
+            margin: 10px auto;
             background: #eee;
+        }
+
+        #bar {
+            width: 480px;
+            margin: 0 auto;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <h1>벽돌깨기 게임</h1>
-    <p id="message">게임 시작</p>
     <div id="board">
+        <p id="message">게임 시작</p>
         <span id="level"></span>
-        <button id="start" onclick="gameStart();">시작</button>
         <span id="point"></span>
     </div>
 
     <canvas id="myCanvas" width="480" height="400"></canvas>
 
+    <div id="bar">
+        <button id="start" onclick="gameStart();">시작</button>
+    </div>
+    
     <script>
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
@@ -44,7 +72,7 @@
         let gameHandle;
 
         const ballRadius = 10;
-        const BALL_SPEED = 2 + 0.1 * gameLevel;
+        const BALL_SPEED = 2 + 0.2 * gameLevel;
         let x = ballRadius;
         let y = ballRadius;
         let dx = BALL_SPEED;
@@ -176,7 +204,7 @@
             gameOn = true;
             x = ballRadius;
             y = canvas.height - ballRadius;
-            dx = BALL_SPEED;
+            dx = BALL_SPEED * Math.random() * 2;
             dy = -BALL_SPEED;
             gameHandle = setTimeout(draw, 10);
 
@@ -246,7 +274,9 @@
             // bounce ball on paddle
             if (y + dy > canvas.height - ballRadius - paddleHeight && 
                 x > paddleX && x < paddleX + paddleWidth) {
-                dx = accel * dx;
+                const angle = 6 * ((x - paddleX) / paddleWidth - 0.5);
+                console.log('angle', angle);
+                dx = accel * Math.abs(dx) * angle;
                 dy = -accel * dy;
             }
 
