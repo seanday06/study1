@@ -221,7 +221,12 @@ const gameReady = () => {
     bricksCount = brickColumnCount * brickRowCount;
 
     document.getElementById('message').innerHTML = `게임 준비`;
-    document.getElementById('ball-count').innerHTML = `${ballCount}`;
+    let ballElement;
+    for (let i = 0; i < ballCount; i++) {
+        ballElement = document.createElement('div');
+        ballElement.className = 'ball';
+        document.getElementById('ball-count').appendChild(ballElement);
+    }
 };
 
 const gameStop = () => {
@@ -232,7 +237,6 @@ const gameStop = () => {
     }
     document.getElementById('start').disabled = false;
     document.getElementById('message').innerHTML = `게임 대기`;
-    document.getElementById('ball-count').innerHTML = `${ballCount}`;
 };
 
 const gameStart = () => {
@@ -261,6 +265,8 @@ const gameStart = () => {
     gameHandle = setTimeout(draw, 10);
     document.getElementById('start').disabled = true;
     document.getElementById('message').innerHTML = `게임 시작`;
+    const balls = document.getElementById('ball-count');
+    balls.removeChild(balls.lastChild);
 };
 
 const gameOver = (win) => {
@@ -281,6 +287,7 @@ const gameOver = (win) => {
         }
     } else {
         document.getElementById('message').innerHTML = '게임 오버';
+        gameReady();
     }
     document.getElementById('start').disabled = false;
 };
