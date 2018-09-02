@@ -32,7 +32,7 @@ const ballColors = [
 ];
 let colorIndex = 0;
 
-const paddleWidth = 80;
+const paddleWidth = 120;
 const paddleHeight = 10;
 let paddleX = (canvas.width - paddleWidth) / 2;
 let rightPressed = false;
@@ -145,6 +145,33 @@ canvas.addEventListener('touchmove', touchHandler, false);
 document.getElementById('level').innerHTML = `LEVEL ${gameLevel}`;
 document.getElementById('point').innerHTML = `POINT ${gamePoint}`;
 
+const calcPaddleBounceAngle = () => {
+    const angle = 1;
+    if ((x - paddleX) / paddleWidth < 0.5) {
+        // left half 
+        if (dx > 0) {
+            const oldDx = dx;
+            dx = -accel * Math.abs(dy);
+            dy = -accel * Math.abs(oldDx);
+            console.log('left half', dx);
+            return;
+        }
+    } else {
+        // right half
+        if (dx < 0) {
+            const oldDx = dx;
+            dx = accel * Math.abs(dy);
+            dy = -accel * Math.abs(oldDx);
+            console.log('right half', dx);
+            return;
+        }
+    }
+
+    dx = accel * dx;
+    dy = -accel * dy;
+    console.log('normal', dx);
+}
+
 const draw = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -173,11 +200,8 @@ const draw = () => {
 
     // bounce ball on paddle
     if (y + dy > canvas.height - ballRadius - paddleHeight && 
-        x > paddleX && x < paddleX + paddleWidth) {
-        const angle = 6 * ((x - paddleX) / paddleWidth - 0.5);
-        console.log('angle', angle);
-        dx = accel * Math.abs(dx) * angle;
-        dy = -accel * dy;
+        x > paddleX && x < paddleX + paddleWidth) {        
+        calcPaddleBounceAngle();
     }
 
     // game over if missed
@@ -254,16 +278,11 @@ const gameStart = () => {
     gameStatus = 'on';
     x = ballRadius;
     y = canvas.height - ballRadius;
-    /*
-    const radian = Math.PI * Math.random() / 2;
-    console.log('radian', radian);
-    dx = BALL_SPEED * Math.abs(Math.sin(radian));
-    dy = -BALL_SPEED * Math.abs(Math.cos(radian));
-    */
-    dx = BALL_SPEED;
-    dy = -BALL_SPEED;
+    const angle = (Math.random() * 2 + 1) * Math.PI / 8;
+    dx = BALL_SPEED * Math.sin(angle);
+    dy = -BALL_SPEED * Math.cos(angle);
 
-   if (bricksCount === 0) {
+    if (bricksCount === 0) {
         for (let c = 0; c < brickColumnCount; c++) {
             bricks[c] = [];
             for (let r = 0; r < brickRowCount; r++) {
