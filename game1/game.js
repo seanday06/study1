@@ -206,6 +206,10 @@ const draw = () => {
 };
 
 const gameReady = () => {
+    gameLevel = 1;
+    gamePoint = 0;
+    ballCount = 3;
+
     for (let c = 0; c < brickColumnCount; c++) {
         bricks[c] = [];
         for (let r = 0; r < brickRowCount; r++) {
@@ -221,6 +225,9 @@ const gameReady = () => {
     bricksCount = brickColumnCount * brickRowCount;
 
     document.getElementById('message').innerHTML = `게임 준비`;
+    document.getElementById('level').innerHTML = `LEVEL ${gameLevel}`;
+    document.getElementById('point').innerHTML = `POINT ${gamePoint}`;
+
     let ballElement;
     for (let i = 0; i < ballCount; i++) {
         ballElement = document.createElement('div');
@@ -240,13 +247,23 @@ const gameStop = () => {
 };
 
 const gameStart = () => {
+    if (gameStatus === 'over') {
+        gameReady();
+    }
+    
     gameStatus = 'on';
     x = ballRadius;
     y = canvas.height - ballRadius;
-    dx = BALL_SPEED * Math.random() * 2;
+    /*
+    const radian = Math.PI * Math.random() / 2;
+    console.log('radian', radian);
+    dx = BALL_SPEED * Math.abs(Math.sin(radian));
+    dy = -BALL_SPEED * Math.abs(Math.cos(radian));
+    */
+    dx = BALL_SPEED;
     dy = -BALL_SPEED;
 
-    if (bricksCount === 0) {
+   if (bricksCount === 0) {
         for (let c = 0; c < brickColumnCount; c++) {
             bricks[c] = [];
             for (let r = 0; r < brickRowCount; r++) {
@@ -287,7 +304,6 @@ const gameOver = (win) => {
         }
     } else {
         document.getElementById('message').innerHTML = '게임 오버';
-        gameReady();
     }
     document.getElementById('start').disabled = false;
 };
