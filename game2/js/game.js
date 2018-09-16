@@ -34,7 +34,7 @@ class Ball {
         this.draw = this.draw.bind(this);
     }
 
-    checkCollision(paddle, gameStop, gameOver) {
+    checkCollision(paddle, onMissed) {
         // side walls
         if (this.x + this.dx < this.radius || this.x + this.dx > canvas.width - this.radius) {
             this.dx = -this.accel * this.dx;
@@ -61,12 +61,7 @@ class Ball {
 
         // check missed and game over
         if (this.y + this.dy > canvas.height + this.radius) {
-            ballCount--;
-            if (ballCount > 0) {
-                gameStop();
-            } else {
-                gameOver(false);
-            }
+            onMissed(this);
         }
     }
 
@@ -304,11 +299,19 @@ class Game {
         this.paddle = new Paddle();
         this.bricks = new Bricks(this.bricksRow, this.bricksColumn);
 
+        this.setStatus = this.setStatus.bind(this);
         this.draw = this.draw.bind(this);
         this.ready = this.ready.bind(this);
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
-        this.over = this.over.bind(this);        
+        this.over = this.over.bind(this);       
+        
+        console.log('new game status', this.status);
+    }
+
+    setStatus(status) {
+        console.log('game status', status);
+        this.status = status;
     }
 
     draw() {
@@ -318,11 +321,15 @@ class Game {
         this.paddle.checkKeyPressed();
     
         // bounce ball on side wall, ceiling and paddle
-        this.ball.checkCollision(this.paddle, this.stop, this.over);
+        this.ball.checkCollision(this.paddle, () => {
+            this.ballCount--;
+            if (this.ballCount > 0) {
+                this.stop();
+            } else {
+                this.over(false);
+            }
+        });
     
-        // next position of the ball
-        this.ball.calcPosition();
-        
         // check collision of the ball to the bricks
         this.bricks.checkCollision(this.ball, (brick) => {
             this.point += brick.point;
@@ -331,6 +338,9 @@ class Game {
                 this.over(true);
             }
         });
+
+        // next position of the ball
+        this.ball.calcPosition();        
     
         // draw objects
         this.bricks.draw();
@@ -367,7 +377,7 @@ class Game {
             this.ready();
         }
         
-        this.status = 'on';
+        this.setStatus('on');
         this.ball.x = this.ball.radius;
         this.ball.y = canvas.height - this.ball.radius;
         const angle = (Math.random() * 2 + 1) * Math.PI / 8;
@@ -390,7 +400,7 @@ class Game {
     }
 
     stop() {
-        this.status = 'stop';
+        this.setStatus('stop');
         if (this.handle) {
             clearTimeout(this.handle);
             this.handle = null;
@@ -400,7 +410,7 @@ class Game {
     }
 
     over(win) {
-        this.status = 'over';
+        this.setStatus('over');
         if (this.handle) {
             clearTimeout(this.handle);
             this.handle = null;
