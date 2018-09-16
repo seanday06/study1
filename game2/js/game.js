@@ -14,8 +14,8 @@ const audio = new Audio('resources/beep.mp3');
 
 class Ball {
     constructor(gameLevel) {
-        this.radius = 10;
-        this.speed = 2 + 0.2 * gameLevel;
+        this.radius = 7.5;
+        this.speed = 3 + 0.2 * gameLevel;
         this.accel = 1;
         this.x = this.radius;
         this.y = canvas.height - this.radius;
@@ -82,7 +82,7 @@ class Ball {
 
 class Paddle {
     constructor() {
-        this.width = 120;
+        this.width = 100;
         this.height = 10;
         this.x = (canvas.width - this.width) / 2;
         this.deltaX = 7;
@@ -144,7 +144,6 @@ class Paddle {
                 const oldDx = ball.dx;
                 ball.dx = -ball.accel * Math.abs(ball.dy);
                 ball.dy = -ball.accel * Math.abs(oldDx);
-                console.log('left half', ball.dx);
                 return;
             }
         } else {
@@ -153,14 +152,12 @@ class Paddle {
                 const oldDx = ball.dx;
                 ball.dx = ball.accel * Math.abs(ball.dy);
                 ball.dy = -ball.accel * Math.abs(oldDx);
-                console.log('right half', ball.dx);
                 return;
             }
         }
     
         ball.dx = ball.accel * ball.dx;
-        ball.dy = -ball.accel * ball.dy;
-        console.log('normal', ball.dx);    
+        ball.dy = -ball.accel * ball.dy; 
     }
 
     draw() {
@@ -181,6 +178,7 @@ class Brick {
         this.color = color;
         this.point = point;
         this.removed = false;
+        this.event = Math.random();
     }
 
     checkCollision(ball) {
@@ -212,11 +210,11 @@ class Bricks {
     constructor(rowCount, columnCount) {
         this.columnCount = columnCount;
         this.rowCount = rowCount;
-        this.brickWidth = 75;
-        this.brickHeight = 20;
-        this.brickPadding = 10;
-        this.brickOffsetTop = 30;
-        this.brickOffsetLeft = 30;
+        this.brickWidth = 45;
+        this.brickHeight = 15;
+        this.brickPadding = 5;
+        this.brickOffsetTop = 75;
+        this.brickOffsetLeft = 15;
         this.brickColors = [
             '#d26013',
             '#e28033',
@@ -231,6 +229,7 @@ class Bricks {
                 let brickY = (r*(this.brickHeight+this.brickPadding))+this.brickOffsetTop;
                 let point = 2 * (this.rowCount - r) - 1;
                 this.bricks[c][r] = new Brick(brickX, brickY, this.brickWidth, this.brickHeight, this.brickColors[r], point);
+                console.log('event random', this.bricks[c][r].event);
             }
         }
         this.bricksCount = rowCount * columnCount;
@@ -293,8 +292,8 @@ class Game {
         this.point = 0;
         this.status = 'ready';
         this.ballCount = 3;
-        this.bricksRow = 3;
-        this.bricksColumn = 5;
+        this.bricksRow = 5;
+        this.bricksColumn = 9;
 
         this.ball = new Ball(this.level);
         this.paddle = new Paddle();
@@ -334,6 +333,10 @@ class Game {
         // check collision of the ball to the bricks
         this.bricks.checkCollision(this.ball, (brick) => {
             this.point += brick.point;
+            if (brick.event > 0.7) {
+                this.paddle.width = Math.min(this.paddle.width + 10, 150);
+                console.log('paddle get longer');
+            }
             document.getElementById('point').innerHTML = `POINT ${this.point}`;
             if (this.bricks.bricksCount === 0) {
                 this.over(true);
@@ -425,6 +428,7 @@ class Game {
             } else {            
                 document.getElementById('message').innerHTML = '레벨 통과';
                 document.getElementById('level').innerHTML = `LEVEL ${this.level}`;
+                this.setStatus('pass');
             }
         } else {
             document.getElementById('message').innerHTML = '게임 오버';
