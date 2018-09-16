@@ -10,6 +10,7 @@
 
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
+const audio = new Audio('resources/beep.mp3');
 
 class Ball {
     constructor(gameLevel) {
@@ -365,7 +366,7 @@ class Game {
         document.getElementById('point').innerHTML = `POINT ${this.point}`;
     
         let ballElement;
-        for (let i = 0; i < ballCount; i++) {
+        for (let i = 0; i < this.ballCount; i++) {
             ballElement = document.createElement('div');
             ballElement.className = 'ball';
             document.getElementById('ball-count').appendChild(ballElement);
@@ -432,16 +433,9 @@ class Game {
     }
 }
 
-let ballCount = 3;
-const brickRowCount = 3;
-const brickColumnCount = 5;
-const audio = new Audio('resources/beep.mp3');
-
-// gameReady();
 const game = new Game();
 game.ready();
 
 const gameStart = () => {
-    game.draw();
     game.start();
 }
