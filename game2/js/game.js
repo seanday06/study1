@@ -11,6 +11,7 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 const audio = new Audio('resources/beep.mp3');
+const eventAudio = new Audio('resources/ring.mp3');
 
 class Ball {
     constructor(gameLevel) {
@@ -335,6 +336,7 @@ class Game {
             this.point += brick.point;
             if (brick.event > 0.7) {
                 this.paddle.width = Math.min(this.paddle.width + 10, 150);
+                eventAudio.play();
                 console.log('paddle get longer');
             }
             document.getElementById('point').innerHTML = `POINT ${this.point}`;
