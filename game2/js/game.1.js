@@ -1,12 +1,3 @@
-/**
- * 게임 상태:
- * - 대기
- * - 실행
- * - 볼 놓침
- * - 레벨 통과
- * - 종료
- * - 승리 (전체 레벨 통과)
- */
 
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
@@ -128,6 +119,18 @@ class Paddle {
     touchHandler(e) {
         this.x = Math.min(canvas.width - this.width, Math.max(0, this.x - e.deltaX));
     };
+
+    incWidth(inc) {
+        if (inc) {
+            const width = Math.min(this.width + 10, 150); 
+            if (width !== this.width) {
+                eventAudio.play();
+            }
+            this.width = width;
+        } else {
+            this.width = 100;
+        }
+    }
 
     checkKeyPressed() {
         if (this.rightKeyPressed && this.x < canvas.width-this.width) {
@@ -286,11 +289,31 @@ class Bricks {
     }
 }
 
+/**
+ * 게임 상태:
+ * - READY: 대기
+ * - RUN: 실행
+ * - STOP: 정지
+ * - LOSE: 볼 놓침
+ * - PASS: 레벨 통과
+ * - OVER: 종료
+ * - WIN: 승리 (전체 레벨 통과)
+ * 
+ * 게임 액션
+ * - init(): 게임을 초기화한다.
+ * - ready(): 게임 시작 전 상태를 만든다.
+ * - start(): 게임을 시작한다.
+ * - stop(): 게임을 중지시킨다.
+ * - pass(): 게임 레벨을 통과한 결과를 처리한다.
+ * - lose(): 게임중에 볼을 놓친 결과를 처리한다.
+ * - win(): 게임 승리를 처리한다.
+ * - over(): 게임 종료를 처리한다.
+ */
 class Game {
     constructor() {
         this.level = 1;
         this.point = 0;
-        this.status = 'ready';
+        this.status = 'READY';
         this.ballCount = 3;
         this.bricksRow = 5;
         this.bricksColumn = 9;
@@ -301,16 +324,17 @@ class Game {
 
         this.setStatus = this.setStatus.bind(this);
         this.draw = this.draw.bind(this);
+        this.init = this.init.bind(this);
         this.ready = this.ready.bind(this);
         this.start = this.start.bind(this);
         this.stop = this.stop.bind(this);
+        this.pass = this.pass.bind(this);       
+        this.lose = this.lose.bind(this);       
+        this.win = this.win.bind(this);       
         this.over = this.over.bind(this);       
-        
-        console.log('new game status', this.status);
     }
 
     setStatus(status) {
-        console.log('game status', status);
         this.status = status;
     }
 
@@ -321,26 +345,19 @@ class Game {
         this.paddle.checkKeyPressed();
     
         // bounce ball on side wall, ceiling and paddle
-        this.ball.checkCollision(this.paddle, () => {
-            this.ballCount--;
-            if (this.ballCount > 0) {
-                this.stop();
-            } else {
-                this.over(false);
-            }
-        });
+        this.ball.checkCollision(this.paddle, this.lose);
     
         // check collision of the ball to the bricks
         this.bricks.checkCollision(this.ball, (brick) => {
             this.point += brick.point;
-            if (brick.event > 0.7) {
-                this.paddle.width = Math.min(this.paddle.width + 10, 150);
-                eventAudio.play();
-                console.log('paddle get longer');
-            }
             document.getElementById('point').innerHTML = `POINT ${this.point}`;
+
+            if (brick.event > 0.7) {
+                this.paddle.incWidth(true);
+            }
+
             if (this.bricks.bricksCount === 0) {
-                this.over(true);
+                this.pass();
             }
         });
 
@@ -353,94 +370,122 @@ class Game {
         this.ball.draw();
     
         // animate
-        if (this.status === 'on') {
+        if (this.status === 'RUN') {
             requestAnimationFrame(this.draw);
         }    
     }
 
-    ready() {
+    // 레벨을 1로 조정하고, 남은 공의 갯수도 최대치로 조정하며, 벽돌도 초기화하고, 점수도 초기화한다.
+    init() {
         this.level = 1;
         this.point = 0;
         this.ballCount = 3;
-    
         this.bricks.reset();
-    
-        document.getElementById('message').innerHTML = `게임 준비`;
+
         document.getElementById('level').innerHTML = `LEVEL ${this.level}`;
         document.getElementById('point').innerHTML = `POINT ${this.point}`;
     
         let ballElement;
-        for (let i = 0; i < this.ballCount; i++) {
+        for (let i = 1; i < this.ballCount; i++) {
             ballElement = document.createElement('div');
             ballElement.className = 'ball';
             document.getElementById('ball-count').appendChild(ballElement);
         }    
+
+        document.getElementById('message').innerHTML = `게임 시작`;
+        
+        this.ready();
     }
 
+    // 볼의 위치, Paddle의 크기를 초기화한다.
+    ready() {
+        this.ball.x = this.paddle.x + (this.paddle.width / 2);
+        this.ball.y = canvas.height - this.paddle.height - this.ball.radius;
+        this.ball.dy = - Math.abs(this.ball.dy);
+
+        this.paddle.incWidth(false);
+    }
+
+    // 볼을 움직이게 한다.
     start() {
-        if (this.status === 'over') {
-            this.ready();
-        }
-        
-        this.setStatus('on');
-        this.ball.x = this.ball.radius;
-        this.ball.y = canvas.height - this.ball.radius;
+        this.setStatus('RUN');
         const angle = (Math.random() * 2 + 1) * Math.PI / 8;
         this.ball.dx = this.ball.speed * Math.sin(angle);
         this.ball.dy = -this.ball.speed * Math.cos(angle);
     
-        if (this.bricks.bricksCount === 0) {
-            this.bricks.reset();
-        }
-    
         this.handle = setTimeout(this.draw, 10);
         document.getElementById('start').disabled = true;
-        document.getElementById('message').innerHTML = `게임 시작`;
-        document.getElementById('level').innerHTML = `LEVEL ${this.level}`;
-        document.getElementById('point').innerHTML = `POINT ${this.point}`;
-        const balls = document.getElementById('ball-count');
-        if (balls) {
-            balls.removeChild(balls.lastChild);    
-        }
     }
 
+    // 볼을 정지시킨다.
     stop() {
-        this.setStatus('stop');
+        this.setStatus('STOP');
         if (this.handle) {
             clearTimeout(this.handle);
             this.handle = null;
         }
         document.getElementById('start').disabled = false;
-        document.getElementById('message').innerHTML = `게임 대기`;    
     }
 
-    over(win) {
-        this.setStatus('over');
-        if (this.handle) {
-            clearTimeout(this.handle);
-            this.handle = null;
+    //  레벨을 1개 증가시킨다. 벽돌들을 초기화시킨다.
+    pass() {
+        this.stop();
+        
+        this.level++;
+        this.bricks.reset();
+
+        // 모든 레벨을 통과했으면 게임 승리!
+        if (this.level > 10) {
+            this.win();
+            return;
         }
-    
-        if (win) {
-            this.level++;
-            if (this.level > 10) {
-                document.getElementById('message').innerHTML = '게임 승리';
-                document.getElementById('level').innerHTML = '';
-            } else {            
-                document.getElementById('message').innerHTML = '레벨 통과';
-                document.getElementById('level').innerHTML = `LEVEL ${this.level}`;
-                this.setStatus('pass');
+
+        document.getElementById('message').innerHTML = '레벨 통과';
+        document.getElementById('level').innerHTML = `LEVEL ${this.level}`;
+
+        this.ready();
+    }
+
+    // 남은 볼의 갯수를 1개 줄인다.
+    lose() {
+        this.stop();
+
+        this.ballCount--;
+
+        if (this.ballCount > 0) {
+            const balls = document.getElementById('ball-count');
+            if (balls) {
+                balls.removeChild(balls.lastChild);    
             }
+
+            this.ready();
         } else {
-            document.getElementById('message').innerHTML = '게임 오버';
+            this.over();
         }
-        document.getElementById('start').disabled = false;    
+    }
+
+    // 모든 레벨을 통과했다. 게임 초기화만 가능하다.
+    win() {
+        document.getElementById('message').innerHTML = '게임 승리';
+        document.getElementById('level').innerHTML = '';
+    }
+
+    // 모든 공을 잃었다. 게임 초기화만 가능하다.
+    over() {
+        this.setStatus('OVER');
+
+        document.getElementById('message').innerHTML = '게임 오버';
     }
 }
 
 const game = new Game();
-game.ready();
+game.init();
+game.draw();
 
 const gameStart = () => {
+    if (game.status === 'OVER') {
+        game.init();
+    }
+
     game.start();
 }
