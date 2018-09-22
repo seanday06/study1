@@ -97,14 +97,37 @@ class Paddle {
     }
 
     keyDownHandler(e) {
+        if (e.keyCode === 17) {
+            this.ctrlKeyDown = true;
+        }
+        if (this.ctrlKeyDown && e.keyCode === 83) {
+            this.ctrlKeyDownAndS = true;
+        }
+        if (this.ctrlKeyDownAndS && e.keyCode === 77) {
+            this.cheatKey = 'pass';
+        }
+
         if (e.keyCode === 39) {
             this.rightKeyPressed = true;
         } else if (e.keyCode === 37) {
             this.leftKeyPressed = true;
         }
     };
-
+    
     keyUpHandler(e) {
+        if (e.keyCode === 17) {
+            this.ctrlKeyDown = false;
+            this.ctrlKeyDownAndS = false;
+            this.cheatKey = '';
+        }
+        if (e.keyCode === 83) {
+            this.ctrlKeyDownAndS = false;
+            this.cheatKey = '';
+        }
+        if (e.keyCode === 77) {
+            this.cheatKey = '';
+        }
+
         if (e.keyCode === 39) {
             this.rightKeyPressed = false;
         } else if (e.keyCode === 37) {
@@ -344,6 +367,10 @@ class Game {
         // move paddle to right or left
         this.paddle.checkKeyPressed();
     
+        if (this.paddle.cheatKey === 'pass') {
+            this.pass();
+        }
+
         // bounce ball on side wall, ceiling and paddle
         this.ball.checkCollision(this.paddle, this.lose);
     
@@ -466,6 +493,8 @@ class Game {
 
     // 모든 레벨을 통과했다. 게임 초기화만 가능하다.
     win() {
+        this.setStatus('WIN');
+
         document.getElementById('message').innerHTML = '게임 승리';
         document.getElementById('level').innerHTML = '';
     }
@@ -483,7 +512,7 @@ game.init();
 game.draw();
 
 const gameStart = () => {
-    if (game.status === 'OVER') {
+    if (game.status === 'OVER' || game.status === 'WIN') {
         game.init();
     }
 
