@@ -310,7 +310,6 @@ class Game {
     }
 
     setStatus(status) {
-        console.log('game status', status);
         this.status = status;
     }
 
