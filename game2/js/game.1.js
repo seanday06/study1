@@ -27,6 +27,16 @@ class Ball {
         this.draw = this.draw.bind(this);
     }
 
+    init(paddle) {
+        if (paddle) {
+            this.x = paddle.x + (paddle.width / 2);
+            this.y = canvas.height = this.radius;
+        } else {
+            this.x = this.radius;
+            this.y = canvas.height = this.radius;
+        }
+    }
+
     checkCollision(paddle, onMissed) {
         // side walls
         if (this.x + this.dx < this.radius || this.x + this.dx > canvas.width - this.radius) {
@@ -144,6 +154,11 @@ class Paddle {
     touchHandler(e) {
         this.x = Math.min(canvas.width - this.width, Math.max(0, this.x - e.deltaX));
     };
+
+    init() {
+        this.width = 100;
+        this.x = (canvas.width - this.width) / 2;
+    }
 
     incWidth(inc) {
         if (inc) {
@@ -428,6 +443,7 @@ class Game {
 
     // 볼의 위치, Paddle의 크기를 초기화한다.
     ready() {
+        this.paddle.init();
         this.ball.x = this.paddle.x + (this.paddle.width / 2);
         this.ball.y = canvas.height - this.paddle.height - this.ball.radius;
         this.ball.dy = - Math.abs(this.ball.dy);
