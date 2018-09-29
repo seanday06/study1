@@ -340,7 +340,7 @@ class Game {
         this.point = 0;
         this.status = 'READY';
         this.ballCount = 3;
-        this.bricksRow = 5;
+        this.bricksRow = 1;
         this.bricksColumn = 9;
 
         this.ball = new Ball(this.level);
@@ -461,6 +461,7 @@ class Game {
         this.stop();
         
         this.level++;
+        this.bricks.rowCount++;
         this.bricks.reset();
 
         // 모든 레벨을 통과했으면 게임 승리!
