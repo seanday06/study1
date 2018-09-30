@@ -183,7 +183,7 @@ class Paddle {
     calcBounceAngle(ball) {
         const angle = 1;
         const offsetRatio = (ball.x - this.x) / this.width;
-        console.log('offsetRatio', offsetRatio);
+
         if (offsetRatio < 0.25) {
             // left quarter 
             if (ball.dx > 0) {
