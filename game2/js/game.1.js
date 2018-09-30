@@ -260,9 +260,9 @@ class Brick {
 }
 
 class Bricks {
-    constructor(rowCount, columnCount) {
+    constructor(columnCount) {
         this.columnCount = columnCount;
-        this.rowCount = rowCount;
+        this.rowCount = 0;
         this.brickWidth = 45;
         this.brickHeight = 15;
         this.brickPadding = 5;
@@ -275,16 +275,6 @@ class Bricks {
         ];
         
         this.bricks = [];
-        for (let c = 0; c < this.columnCount; c++) {
-            this.bricks[c] = [];
-            for (let r = 0; r < this.rowCount; r++) {
-                let brickX = (c*(this.brickWidth+this.brickPadding))+this.brickOffsetLeft;
-                let brickY = (r*(this.brickHeight+this.brickPadding))+this.brickOffsetTop;
-                let point = 2 * (this.rowCount - r) - 1;
-                this.bricks[c][r] = new Brick(brickX, brickY, this.brickWidth, this.brickHeight, this.brickColors[r], point);
-            }
-        }
-        this.bricksCount = rowCount * columnCount;
 
         this.getBricksCount = this.getBricksCount.bind(this);
         this.getBrick = this.getBrick.bind(this);
@@ -293,10 +283,23 @@ class Bricks {
         this.draw = this.draw.bind(this);
     }
 
+    removeAll() {
+        for (let c = 0; c < this.columnCount; c++) {
+            for (let r = 0; r < this.rowCount; r++) {
+                this.bricks[c][r] = null;
+            }
+        }
+        this.rowCount = 0;
+        this.bricksCount = 0;
+    }
+
     // 한 줄을 새로 추가
     incRow() {
         const r = this.rowCount;
         for (let c = 0; c < this.columnCount; c++) {
+            if (r === 0) {
+                this.bricks[c] = [];
+            }
             let brickX = (c*(this.brickWidth+this.brickPadding))+this.brickOffsetLeft;
             let brickY = (r*(this.brickHeight+this.brickPadding))+this.brickOffsetTop;
             this.bricks[c][r] = new Brick(brickX, brickY, this.brickWidth, this.brickHeight, this.brickColors[r], point);
@@ -384,12 +387,11 @@ class Game {
         this.point = 0;
         this.status = 'READY';
         this.ballCount = 3;
-        this.bricksRow = 1;
         this.bricksColumn = 9;
 
         this.ball = new Ball(this.level);
         this.paddle = new Paddle();
-        this.bricks = new Bricks(this.bricksRow, this.bricksColumn);
+        this.bricks = new Bricks(this.bricksColumn);
 
         this.setStatus = this.setStatus.bind(this);
         this.draw = this.draw.bind(this);
@@ -454,6 +456,7 @@ class Game {
         this.level = 1;
         this.point = 0;
         this.ballCount = 3;
+        this.bricks.incRow();
         this.bricks.reset();
 
         document.getElementById('level').innerHTML = `LEVEL ${this.level}`;
@@ -543,7 +546,9 @@ class Game {
     // 모든 레벨을 통과했다. 게임 초기화만 가능하다.
     win() {
         this.setStatus('WIN');
-
+        
+        this.bricks.removeAll();
+        
         document.getElementById('message').innerHTML = '게임 승리';
         document.getElementById('level').innerHTML = '';
     }
@@ -551,6 +556,8 @@ class Game {
     // 모든 공을 잃었다. 게임 초기화만 가능하다.
     over() {
         this.setStatus('OVER');
+
+        this.bricks.removeAll();
 
         document.getElementById('message').innerHTML = '게임 오버';
     }
