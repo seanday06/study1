@@ -7,7 +7,7 @@ const eventAudio = new Audio('resources/ring.mp3');
 class Ball {
     constructor(gameLevel) {
         this.radius = 7.5;
-        this.speed = 3 + 0.2 * gameLevel;
+        this.speed = 4 + 0.3 * gameLevel;
         this.accel = 1;
         this.x = this.radius;
         this.y = canvas.height - this.radius;
@@ -107,14 +107,14 @@ class Paddle {
     }
 
     keyDownHandler(e) {
-        // set cheat key ctrl+S+M
-        if (e.keyCode === 17) {
-            this.ctrlKeyDown = true;
+        // set cheat key alt+S+M
+        if (e.keyCode === 18) {
+            this.altKeyDown = true;
         }
-        if (this.ctrlKeyDown && e.keyCode === 83) {
-            this.ctrlKeyDownAndS = true;
+        if (this.altKeyDown && e.keyCode === 83) {
+            this.altKeyDownAndS = true;
         }
-        if (this.ctrlKeyDownAndS && e.keyCode === 77) {
+        if (this.altKeyDownAndS && e.keyCode === 77) {
             this.cheatKey = 'pass';
         }
 
