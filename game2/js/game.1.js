@@ -182,24 +182,32 @@ class Paddle {
 
     calcBounceAngle(ball) {
         const angle = 1;
-        if ((ball.x - this.x) / this.width < 0.5) {
-            // left half 
+        const offsetRatio = (ball.x - this.x) / this.width;
+        console.log('offsetRatio', offsetRatio);
+        if (offsetRatio < 0.25) {
+            // left quarter 
             if (ball.dx > 0) {
                 const oldDx = ball.dx;
                 ball.dx = -ball.accel * Math.abs(ball.dy);
                 ball.dy = -ball.accel * Math.abs(oldDx);
                 return;
             }
+        } else if (offsetRatio >= 0.25 && offsetRatio < 0.75) {
+            // center half
+            ball.dx = ball.accel * ball.dx;
+            ball.dy = -ball.accel * ball.dy; 
+            return;
         } else {
-            // right half
+            // right quarter
             if (ball.dx < 0) {
                 const oldDx = ball.dx;
                 ball.dx = ball.accel * Math.abs(ball.dy);
                 ball.dy = -ball.accel * Math.abs(oldDx);
                 return;
             }
-        }
-    
+        }    
+
+        // center half
         ball.dx = ball.accel * ball.dx;
         ball.dy = -ball.accel * ball.dy; 
     }
