@@ -107,8 +107,8 @@ class Paddle {
     }
 
     keyDownHandler(e) {
-        // set cheat key ctrl+S+M
-        if (e.keyCode === 17) {
+        // set cheat key alt+S+M
+        if (e.keyCode === 18) {
             this.ctrlKeyDown = true;
         }
         if (this.ctrlKeyDown && e.keyCode === 83) {
@@ -126,8 +126,8 @@ class Paddle {
     };
     
     keyUpHandler(e) {
-        // reset cheat key ctrl+S+M
-        if (e.keyCode === 17) {
+        // reset cheat key alt+S+M
+        if (e.keyCode === 18) {
             this.ctrlKeyDown = false;
             this.ctrlKeyDownAndS = false;
             this.cheatKey = '';
