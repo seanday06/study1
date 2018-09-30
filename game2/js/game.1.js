@@ -292,6 +292,26 @@ class Bricks {
         this.draw = this.draw.bind(this);
     }
 
+    // 한 줄을 새로 추가
+    incRow() {
+        const r = this.rowCount;
+        for (let c = 0; c < this.columnCount; c++) {
+            let brickX = (c*(this.brickWidth+this.brickPadding))+this.brickOffsetLeft;
+            let brickY = (r*(this.brickHeight+this.brickPadding))+this.brickOffsetTop;
+            this.bricks[c][r] = new Brick(brickX, brickY, this.brickWidth, this.brickHeight, this.brickColors[r], point);
+        }
+        
+        this.rowCount++;
+        for (let c = 0; c < this.columnCount; c++) {
+            for (let r = 0; r < this.rowCount; r++) {
+                let point = 2 * (this.rowCount - r) - 1;
+                this.bricks[c][r].point = point;
+            }
+        }
+
+        this.bricksCount = this.rowCount * this.columnCount;
+    }
+
     getBricksCount() {
         return this.rowCount * this.columnCount;
     }
@@ -363,7 +383,7 @@ class Game {
         this.point = 0;
         this.status = 'READY';
         this.ballCount = 3;
-        this.bricksRow = 5;
+        this.bricksRow = 1;
         this.bricksColumn = 9;
 
         this.ball = new Ball(this.level);
@@ -394,6 +414,7 @@ class Game {
     
         if (this.paddle.cheatKey === 'pass') {
             this.pass();
+            this.paddle.cheatKey = '';
         }
 
         // bounce ball on side wall, ceiling and paddle
@@ -485,6 +506,7 @@ class Game {
         this.stop();
         
         this.level++;
+        this.bricks.incRow();
         this.bricks.reset();
 
         // 모든 레벨을 통과했으면 게임 승리!
