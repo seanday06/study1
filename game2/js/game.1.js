@@ -3,6 +3,11 @@ const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 const audio = new Audio('resources/beep.mp3');
 const eventAudio = new Audio('resources/ring.mp3');
+const brickColors = [
+    '#f2a053',
+    '#e28033',
+    '#d26013',
+];
 
 class Ball {
     constructor(gameLevel) {
@@ -223,13 +228,13 @@ class Paddle {
 }
 
 class Brick {
-    constructor(x, y, width, height, color, point) {
+    constructor(x, y, width, height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.color = color;
-        this.point = point;
+        this.energy = 1;
+        this.point = 1;
         this.removed = false;
         this.event = Math.random();
     }
@@ -253,7 +258,7 @@ class Brick {
 
         ctx.beginPath();
         ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.fillStyle = this.color;
+        ctx.fillStyle = brickColors[this.energy - 1];
         ctx.fill();
         ctx.closePath();
     }
@@ -268,11 +273,6 @@ class Bricks {
         this.brickPadding = 5;
         this.brickOffsetTop = 75;
         this.brickOffsetLeft = 15;
-        this.brickColors = [
-            '#d26013',
-            '#e28033',
-            '#f2a053',
-        ];
         
         this.bricks = [];
 
@@ -302,12 +302,22 @@ class Bricks {
             }
             let brickX = (c*(this.brickWidth+this.brickPadding))+this.brickOffsetLeft;
             let brickY = (r*(this.brickHeight+this.brickPadding))+this.brickOffsetTop;
-            this.bricks[c][r] = new Brick(brickX, brickY, this.brickWidth, this.brickHeight, this.brickColors[r], point);
+            this.bricks[c][r] = new Brick(brickX, brickY, this.brickWidth, this.brickHeight);
         }
         
         this.rowCount++;
         for (let c = 0; c < this.columnCount; c++) {
             for (let r = 0; r < this.rowCount; r++) {
+                let energy = 1;
+                if (this.rowCount > 2) {
+                    if (r === 0) {
+                        energy = 3;
+                    } else if (r === 1) {
+                        energy = 2;
+                    }
+                }
+                this.bricks[c][r].energy = energy;
+
                 let point = 2 * (this.rowCount - r) - 1;
                 this.bricks[c][r].point = point;
             }
@@ -332,12 +342,17 @@ class Bricks {
                 if (b.checkCollision(ball)) {
                     audio.play();
                     ball.dy = -ball.dy;
-                    b.remove();
-                    this.bricksCount--;
+                    b.energy--;
+                    if (b.energy === 0) {
+                        b.remove();
+                        this.bricksCount--;
     
-                    if (onCollide(b)) {
-                        break;
+                        if (onCollide(b)) {
+                            break;
+                        }
                     }
+
+                    console.log('brick', { energy: b.energy, removed: b.removed });
                 }
             }
         }    
