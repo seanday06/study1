@@ -9,12 +9,15 @@ const brickColors = [
     '#e28033',
     '#d26013',
 ];
-let brickImagePattern; // = ctx.createPattern(brickImage, 'repeat');
+
+/*
+let brickImagePattern;
 const brickImage = new Image();
 brickImage.src = 'resources/brick.small.png';
 brickImage.onload = () => {
     brickImagePattern = ctx.createPattern(brickImage, 'repeat');
 }
+*/
 
 class Ball {
     constructor(gameLevel) {
@@ -276,8 +279,8 @@ class Brick {
 
         ctx.beginPath();
         ctx.rect(this.x, this.y, this.width, this.height);
-        // ctx.fillStyle = brickColors[this.energy - 1];
-        ctx.fillStyle = brickImagePattern;
+        ctx.fillStyle = brickColors[this.energy - 1];
+        // ctx.fillStyle = brickImagePattern;
         ctx.fill(); 
         ctx.closePath();
     }
