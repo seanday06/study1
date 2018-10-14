@@ -195,8 +195,8 @@ class Paddle {
 
     calcBounceAngle(ball) {
         const angle = 1;
+/*
         const offsetRatio = (ball.x - this.x) / this.width;
-
         if (offsetRatio < 0.25) {
             // left quarter 
             if (ball.dx > 0) {
@@ -223,6 +223,17 @@ class Paddle {
         // center half
         ball.dx = ball.accel * ball.dx;
         ball.dy = -ball.accel * ball.dy; 
+*/
+
+        const offsetRatio = ((ball.x - this.x) / this.width) - 0.5;
+
+        if ((ball.dx > 0 && offsetRatio > 0) || (ball.dx < 0 && offsetRatio < 0)) {
+            ball.dx = ball.accel * ball.dx * (1 + Math.sin(Math.PI * Math.abs(offsetRatio) / 6));
+            ball.dy = -ball.accel * ball.dy * (1 - Math.sin(Math.PI * Math.abs(offsetRatio) / 6));
+        } else {
+            ball.dx = ball.accel * ball.dx * (1 - Math.sin(Math.PI * Math.abs(offsetRatio) / 6));
+            ball.dy = -ball.accel * ball.dy * (1 + Math.sin(Math.PI * Math.abs(offsetRatio) / 6));
+        }
     }
 
     draw() {
