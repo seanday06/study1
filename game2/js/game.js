@@ -9,6 +9,8 @@ const brickColors = [
     '#e28033',
     '#d26013',
 ];
+const candyTypes = ['gravity', 'longPaddle', 'shortPaddle'];
+const candyColors = ['#04f849', '#09f8b5', '#1efb04'];
 
 /*
 let brickImagePattern;
@@ -272,6 +274,9 @@ class Brick {
 
     remove() {
         this.removed = true;
+        if (this.candy) {
+            this.candy.show = true;
+        }
     }
 
     draw() {
@@ -287,8 +292,9 @@ class Brick {
 }
 
 class Bricks {
-    constructor(columnCount) {
-        this.columnCount = columnCount;
+    constructor(game) {
+        this.game = game;
+        this.columnCount = game.bricksColumn;
         this.rowCount = 0;
         this.brickWidth = 45;
         this.brickHeight = 15;
@@ -326,7 +332,17 @@ class Bricks {
             let brickY = (r*(this.brickHeight+this.brickPadding))+this.brickOffsetTop;
             this.bricks[c][r] = new Brick(brickX, brickY, this.brickWidth, this.brickHeight);
         }
-        
+
+        // 임의의 Brick 에 Candy 지정
+        const brickIndex = Math.floor(Math.random() * this.columnCount);
+        const candyBrick = this.bricks[brickIndex][r];
+        const candyIndex = Math.floor(Math.random() * candyTypes.length);
+        const candy = new Candy(candyIndex, candyBrick.x, candyBrick.y);
+        this.game.candies.addCandy(candy);
+        candyBrick.candy = candy;
+
+        console.log('new candy', { brickIndex, candyIndex });
+
         this.rowCount++;
         for (let c = 0; c < this.columnCount; c++) {
             for (let r = 0; r < this.rowCount; r++) {
@@ -396,6 +412,72 @@ class Bricks {
     }
 }
 
+class Candy {
+    constructor(typeIndex, x, y) {
+        this.type = candyTypes[typeIndex];
+        this.radius = 10;
+        this.color = candyColors[typeIndex];
+        this.speed = 2;
+        this.x = x;
+        this.y = y;
+        this.dy = this.speed;
+        this.show = false;
+    }
+
+    calcPosition() {
+        this.y += this.dy;
+    }
+
+    draw() {
+        if (!this.show) return;
+
+        this.calcPosition();
+
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();    
+    }
+
+    checkCollision(paddle) {
+        return (this.y + this.dy > canvas.height - this.radius - paddle.height && 
+            this.x > paddle.x && this.x < paddle.x + paddle.width);
+    }
+}
+
+class Candies {
+    constructor() {
+        this.candies = [];
+
+        this.getCandiesCount = this.getCandiesCount.bind(this);
+        this.checkCollision = this.checkCollision.bind(this);
+        this.draw = this.draw.bind(this);
+    }
+
+    getCandiesCount() {
+        return this.candies.length;
+    }
+
+    addCandy(candy) {
+        this.candies.push(candy);
+    }
+
+    checkCollision(paddle, onCollide) {
+        for (let n = 0; n < this.candies.length; n++) {
+            if (this.candies[n].checkCollision(paddle)) {
+                onCollide(this.candies[n]);
+            }
+        }    
+    }
+
+    draw() {
+        for (let n = 0; n < this.candies.length; n++) {
+            this.candies[n].draw();            
+        }    
+    }
+}
+
 /**
  * 게임 상태:
  * - READY: 대기
@@ -426,8 +508,9 @@ class Game {
 
         this.ball = new Ball(this.level);
         this.paddle = new Paddle();
-        this.bricks = new Bricks(this.bricksColumn);
-
+        this.candies = new Candies();
+        this.bricks = new Bricks(this);
+        
         this.setStatus = this.setStatus.bind(this);
         this.draw = this.draw.bind(this);
         this.init = this.init.bind(this);
@@ -472,6 +555,11 @@ class Game {
             }
         });
 
+        // check collision of the candy to the paddle
+        this.candies.checkCollision(this.paddle, (candy) => {
+            console.log('candy', candy.type);
+        });
+
         // next position of the ball
         this.ball.calcPosition();        
     
@@ -479,7 +567,8 @@ class Game {
         this.bricks.draw();
         this.paddle.draw();
         this.ball.draw();
-    
+        this.candies.draw();
+
         // animate
         if (this.status === 'RUN') {
             requestAnimationFrame(this.draw);
@@ -546,7 +635,7 @@ class Game {
         this.stop();
         
         this.level++;
-        this.bricks.incRow();
+        this.bricks.incRow(this);
         this.bricks.reset();
 
         // 모든 레벨을 통과했으면 게임 승리!
