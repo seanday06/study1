@@ -179,12 +179,12 @@ class Paddle {
     }
 
     incWidth(inc) {
-        if (inc) {
-            const width = Math.min(this.width + 10, 150); 
-            if (width !== this.width) {
-                eventAudio.play();
-            }
-            this.width = width;
+        if (inc > 0) {
+            this.width = 150;
+            eventAudio.play();
+        } else if (inc < 0) {
+            this.width = 50;
+            eventAudio.play();
         } else {
             this.width = 100;
         }
@@ -547,7 +547,7 @@ class Game {
             document.getElementById('point').innerHTML = `POINT ${this.point}`;
 
             if (brick.event > 0.7) {
-                this.paddle.incWidth(true);
+                // this.paddle.incWidth(true);
             }
 
             if (this.bricks.bricksCount === 0) {
@@ -557,7 +557,25 @@ class Game {
 
         // check collision of the candy to the paddle
         this.candies.checkCollision(this.paddle, (candy) => {
-            console.log('candy', candy.type);
+            switch (candy.type) {
+                case 'gravity':
+                console.log('candy is gravity', candy);
+                break;
+
+                case 'longPaddle':
+                console.log('candy is longPaddle', candy);
+                this.paddle.incWidth(1);
+                break;
+
+                case 'shortPaddle':
+                console.log('candy is shortPaddle', candy);
+                this.paddle.incWidth(-1);
+                break;
+
+                default:
+                console.log('candy is unknown', candy);
+            }
+            candy.y = canvas.height + this.ball.radius * 2;
         });
 
         // next position of the ball
@@ -605,7 +623,7 @@ class Game {
         this.ball.y = canvas.height - this.paddle.height - this.ball.radius;
         this.ball.dy = - Math.abs(this.ball.dy);
 
-        this.paddle.incWidth(false);
+        this.paddle.incWidth(0);
     }
 
     // 볼을 움직이게 한다.
