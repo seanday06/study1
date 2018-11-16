@@ -335,13 +335,24 @@ class Bricks {
 
         // 임의의 Brick 에 Candy 지정
         const brickIndex = Math.floor(Math.random() * this.columnCount);
+        const nextBrickIndex = Math.floor(brickIndex + (this.columnCount / 2)) % this.columnCount;
+
         const candyBrick = this.bricks[brickIndex][r];
+        const nextCandyBrick = this.bricks[nextBrickIndex][r];
+
         const candyIndex = Math.floor(Math.random() * candyTypes.length);
+        const nextCandyIndex = Math.floor(Math.random() * candyTypes.length);
+
         const candy = new Candy(candyIndex, candyBrick.x, candyBrick.y);
+        const nextCandy = new Candy(nextCandyIndex, nextCandyBrick.x, nextCandyBrick.y);
+
         this.game.candies.addCandy(candy);
+        this.game.candies.addCandy(nextCandy);
         candyBrick.candy = candy;
+        nextCandyBrick.candy = nextCandy;
 
         console.log('new candy', { brickIndex, candyIndex });
+        console.log('total candies', this.game.candies);
 
         this.rowCount++;
         for (let c = 0; c < this.columnCount; c++) {
@@ -395,9 +406,11 @@ class Bricks {
     }
 
     reset() {
+        let brick;
         for (let c = 0; c < this.columnCount; c++) {
             for (let r = 0; r < this.rowCount; r++) {
-                this.getBrick(r, c).removed = false;
+                brick = this.getBrick(r, c);
+                brick.removed = false;
             }
         }
         this.bricksCount = this.rowCount * this.columnCount;
@@ -475,6 +488,10 @@ class Candies {
         for (let n = 0; n < this.candies.length; n++) {
             this.candies[n].draw();            
         }    
+    }
+
+    reset() {
+        this.candies = [];
     }
 }
 
@@ -651,7 +668,9 @@ class Game {
     //  레벨을 1개 증가시킨다. 벽돌들을 초기화시킨다.
     pass() {
         this.stop();
-        
+
+        this.candies.reset();
+
         this.level++;
         this.bricks.incRow(this);
         this.bricks.reset();
