@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <title>Form</title>
+    <script>
+        let pTag;
+        window.onload = () => {
+            const f1 = (x, y) => (x + y);
+
+            let a = 3;
+            let b = 3.14;
+            let sum = f1(a, b);
+
+            pTag = document.getElementById('resultSum');
+            pTag.innerHTML = sum.toFixed(2);
+
+            const greeting = (name) => (`${name}씨 안녕하세요?`);
+            let hello1 = greeting('승민');
+
+            pTag = document.getElementById('resultGreeting1');
+            pTag.innerHTML = hello1;
+
+            const greeting2 = (name) => {
+                return name === '승민' ? `${name}아 안녕?` : `${name}씨 안녕하세요?`;
+            };
+            let hello2 = greeting2('승민');
+            let hello3 = greeting2('상원');
+
+            pTag = document.getElementById('resultGreeting2');
+            pTag.innerHTML = hello2;
+            pTag = document.getElementById('resultGreeting3');
+            pTag.innerHTML = hello3;
+
+            const values = [5, 10, 15, 20];
+            const factorial = (number) => {
+                let v = 1;
+                let ftlResult = 1;
+                while (v < number) {
+                    v++;
+                    ftlResult = ftlResult * v;
+                }
+                return ftlResult;
+            };
+
+            pTag = document.getElementById('resultIfAll');
+            pTag.innerHTML = values.map(value => factorial(value)).join(', ');
+
+        };
+        
+    </script>
+</head>
+
+<body>
+    <h1>스스로 해보기</h1>
+
+    <h2>2. 함수</h2>
+<pre>
+    const f1 = (x, y) => (x + y);
+
+    let a = 3;
+    let b = 3.14;
+
+    let sum = f1(a, b);
+
+    const greeting = (name) => (`${name}씨 안녕하세요?`);
+
+    let hello1 = greeting('승민');
+</pre>
+
+    <h3>2.1 덧셈 해보기</h3>
+    <p id="resultSum" />
+
+    <h3>2.2 인사말 보내기</h3>
+    <p id="resultGreeting1" />
+
+    <h3>2.3 조건 분기 해보기</h3>
+    <p id="resultGreeting2" />
+    <p id="resultGreeting3" />
+
+    <h3>2.4 배열 처리 함수</h3>
+    <label>Factorial 계산</label>
+    [5, 10, 15, 20]
+
+    <p id="resultIfAll" />
+
+    <label>양수 배열</label>
+    <p id="resultIfPlus" />
+</body>
+
+</html>
