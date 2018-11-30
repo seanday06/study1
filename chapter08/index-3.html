@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <title>연산</title>
+    <script src="./print.js"></script>
+    <script>
+        window.onload = () => {
+            // 연산
+            let a = 2;
+            let b = 3.14;
+            let c = a + b;
+            print(`${a} + ${b} = ${c.toFixed(2)}`);
+
+            // 반복
+            let n = 100;
+            let sum = 0;
+            for (let i = 1; i <= n; i++) {
+                sum = sum + i;
+            }
+            print(`1부터 ${n}까지 합은 ${sum}`);
+
+            // 문자열
+            let person = '한 승민';
+            let greeting = `${person}씨, 안녕하세요?`;
+            print(greeting);
+
+            // 배열
+            let numbers = [100, 57, -3, -56, 19, -82, 36, 9, 42, -93];
+            print(`숫자 배열이 다음과 같습니다:`);
+            print(numbers.join(', '));
+            print('0보다 큰 자연수만 추출하세요.');
+            
+            let numbersGTzero = [];
+            numbers.forEach((number) => {
+                if (number > 0) {
+                    numbersGTzero.push(number);
+                }
+            });
+            print(`결과는 ${numbersGTzero.join(', ')}`);
+        };
+    </script>
+</head>
+
+<body>
+    <h1>연산</h1>
+</body>
+
+</html>
