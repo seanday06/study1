@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <title>최대 공약수</title>
+    <script src="./print.js"></script>
+    <script>
+        // 약수를 구하는 함수
+        const measure = (number) => {
+            let result = [];
+            for (let i = 1; i <= number; i++) {
+                if (number % i === 0) {
+                    result.push(i);
+                }
+            }
+            return result;
+        };
+
+        // 최대 공약수를 구하는 함수
+        const greatestCommonMeasure = (x, y) => {
+            let mx = measure(x);
+
+            for (let i = mx.length - 1; i > 0; i--) {
+                if (y % mx[i] === 0) {
+                    return mx[i];
+                }
+            }
+        };
+
+        // 최소 공배수를 구하는 함수
+        const leastCommonMultiple = (x, y) => {
+            return x * y / greatestCommonMeasure(x, y);
+        };
+
+        window.onload = () => {
+            let x = 72;
+            let y = 180;
+            let mx = measure(x);
+            let my = measure(y);
+            print(`숫자 ${x}의 약수는 [${my.join(', ')}]이다.`);
+            print(`숫자 ${y}의 약수는 [${mx.join(', ')}]이다.`);
+
+            let gcm = greatestCommonMeasure(x, y);
+            print(`숫자 ${x}, ${y}의 최대 공약수는 ${gcm}이다.`);
+
+            let lcm = leastCommonMultiple(x, y);
+            print(`숫자 ${x}, ${y}의 최소 공배수는 ${lcm}이다.`);
+        };
+    </script>
+</head>
+
+<body>
+    <h1>최대 공약수</h1>
+</body>
+
+</html>

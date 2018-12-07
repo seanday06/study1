@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <title>정렬 알고리즘</title>
+    <script src="./print.js"></script>
+    <script>        
+        const elapsedTime = (title, method, args) => {
+            let startTime = new Date();
+
+            let results = method(args);
+
+            let diff = new Date() - startTime;
+            print(`${title} elapsed time: ${diff} ms`);
+
+            return results;
+        };
+
+        const bubbleSort = (values) => {
+            let loopCount = values.length;
+
+            for (let j = loopCount; j > 0; j--) {
+                for (let i = 0; i < loopCount; i++) {
+                    if (values[i] > values[i+1]) {
+                        let tmp = values[i];
+                        values[i] = values[i+1];
+                        values[i+1] = tmp;
+                    }
+                }
+            }
+
+            return values;
+        };
+
+        const selectSort = (values) => {
+            let loopCount = values.length;
+
+            let min;
+            let minIndex;
+            for (let j = 0; j < loopCount; j++) {
+                min = values[j];
+                minIndex = j;
+                for (let i = j+1; i < loopCount; i++) {
+                    if (min > values[i]) {
+                        min = values[i];
+                        minIndex = i;
+                    }
+                }
+
+                values[minIndex] = values[j];
+                values[j] = min; 
+            }
+
+            return values;
+        };
+
+        const insertionSort = (values) => {
+            let loopCount = values.length;
+
+            let key;
+            let i, j;
+            for (j = 1; j < loopCount; j++) {
+                key = values[j];
+                for (i = j-1; i >= 0 && values[i] > key; i--) {
+                    values[i+1] = values[i];
+                }
+
+                values[i+1] = key;
+            }
+
+            return values;
+        };
+
+        const mergeSort = (values) => {
+            let loopCount = values.length;
+            if (loopCount <= 1) {
+                return values;
+            }
+
+            let midIndex = Math.floor(loopCount / 2);
+            let leftList = values.slice(0, midIndex);
+            let rightList = values.slice(midIndex, loopCount);
+
+            let leftTemp = mergeSort(leftList);
+            let rightTemp = mergeSort(rightList);
+
+            let i = 0;
+            let j = 0;
+            let results = [];
+
+            while (i < leftTemp.length && j < rightTemp.length) {
+                if (leftTemp[i] < rightTemp[j]) {
+                    results.push(leftTemp[i]);
+                    i++;
+                } else {
+                    results.push(rightTemp[j])
+                    j++;
+                }
+            }
+
+            results = results.concat(leftTemp.slice(i));
+            results = results.concat(rightTemp.slice(j));
+           
+            return results;
+        };
+
+        window.onload = () => {
+            let numbers = [];
+            let count = 10;
+            for (let i = 0; i < count; i++) {
+                numbers[i] = Math.floor(Math.random() * count * 100);
+            }
+
+            print(`배열 데이터 갯수: ${count} 개`);
+            print(`${numbers.join(', ')}`);
+
+            let result;
+
+            result = elapsedTime('Bubble sort', bubbleSort, numbers.slice(0));
+            print(result.join(', '));
+
+            result = elapsedTime('Select sort', selectSort, numbers.slice(0));
+            print(result.join(', '));
+
+            result = elapsedTime('Insertion sort', insertionSort, numbers.slice(0));
+            print(result.join(', '));
+
+            result = elapsedTime('Merge sort', mergeSort, numbers.slice(0));
+            print(result.join(', '));
+        };
+    </script>
+</head>
+
+<body>
+    <h1>정렬 알고리즘</h1>
+</body>
+
+</html>
