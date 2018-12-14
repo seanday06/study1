@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <title>프랙탈</title>
+    <script src="./print.js"></script>
+    <link rel="stylesheet" href="./style.css" />
+    <script>
+        const drawLine = (ctx, p1, p2, color = 'black') => {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = color;
+            ctx.stroke();
+        };
+
+        const drawTriangle = (ctx, p1, p2, p3) => {
+           drawLine(ctx, p1, p2);
+           drawLine(ctx, p2, p3);
+           drawLine(ctx, p3, p1);
+        };
+
+        const drawTrangleFract = (ctx, p1, p2, p3, limit) => {
+            if (limit > 0) {
+                const q1 = {
+                    x: p1.x + (p2.x - p1.x) / 2,
+                    y: p1.y - (p1.y - p2.y) / 2,
+                };
+                const q2 = {
+                    x: p2.x + (p3.x - p2.x) / 2,
+                    y: p2.y - (p2.y - p3.y) / 2,
+                };
+                const q3 = {
+                    x: p1.x + (p3.x - p1.x) / 2,
+                    y: p1.y - (p1.y - p3.y) / 2,
+                };
+
+                drawTrangleFract(ctx, p1, q1, q3, limit-1);
+                drawTrangleFract(ctx, q1, p2, q2, limit-1);
+                drawTrangleFract(ctx, q3, q2, p3, limit-1);
+            } else {
+                drawTriangle(ctx, p1, p2, p3);
+            }
+        };
+
+        const drawTreeFract = (ctx, x, y, length, angle) => {
+            ctx.beginPath();
+            ctx.save();
+            
+            ctx.translate(x, y);
+            ctx.rotate(angle * Math.PI/180);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, -length);
+            ctx.stroke();
+            
+            if (length < 50) {
+                ctx.restore();
+                return;
+            }
+            
+            drawTreeFract(ctx, 0, -length, length*0.8, -15);
+            drawTreeFract(ctx, 0, -length, length*0.8, 15);
+            
+            ctx.restore();
+        };
+
+        const checkMandelbrotSet = (x, y) => {
+            let cX = x;
+            let cY = y;
+
+            const iteration = 100;
+            for (let i = 0; i < iteration; i++) {
+                let tempCx = cX * cX - cY * cY + x;
+                let tempCy = 2 * cX * cY + y;
+
+                cX = tempCx;
+                cY = tempCy;
+
+                if (cX * cY > 5) {
+                    return i / iteration * 100;
+                }
+            }
+            
+            return 0;
+        };
+
+        const drawMandelbrotSet = (ctx, width, height) => {
+            const ratio = 200;
+            let panX = 2;
+            let panY = 1.5;
+
+            for (let x = 0; x < width; x++) {
+                for (let y = 0; y < height; y++) {
+                    const value = checkMandelbrotSet(x/ratio - panX, y/ratio - panY);
+                    if (value === 0) {
+                        ctx.fillStyle = '#000';
+                        ctx.fillRect(x, y, 1, 1);
+                    } else {
+                        ctx.fillStyle = `hsl(0, 100%, ${value}%)`;
+                        ctx.fillRect(x, y, 1, 1);
+                    }
+                }
+            }
+        }
+
+        window.onload = () => {
+            const myCanvas = document.createElement("canvas");
+            myCanvas.width = 600;
+            myCanvas.height = 600;
+            document.body.appendChild(myCanvas);
+
+            const ctx = myCanvas.getContext("2d");
+
+            // Triangle
+            /*
+            const p1 = { x: 0, y: 0 };
+            const p2 = { x: 600, y: 0 };
+            const p3 = { x: 300, y: 600 };
+            drawTrangleFract(ctx, p1, p2, p3, 10);
+            */
+
+            // Tree
+            // drawTreeFract(ctx, 300, 600, 100, 0);
+
+            // MandelbrotSet
+            drawMandelbrotSet(ctx, myCanvas.width, myCanvas.height);
+        };
+    </script>
+</head>
+
+<body>
+    <h1>프랙탈</h1>
+</body>
+
+</html>

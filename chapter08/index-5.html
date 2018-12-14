@@ -108,27 +108,27 @@
 
         window.onload = () => {
             let numbers = [];
-            let count = 10;
+            let count = 20000;
             for (let i = 0; i < count; i++) {
                 numbers[i] = Math.floor(Math.random() * count * 100);
             }
 
             print(`배열 데이터 갯수: ${count} 개`);
-            print(`${numbers.join(', ')}`);
+            //print(`${numbers.join(', ')}`);
 
             let result;
 
             result = elapsedTime('Bubble sort', bubbleSort, numbers.slice(0));
-            print(result.join(', '));
+            // print(result.join(', '));
 
             result = elapsedTime('Select sort', selectSort, numbers.slice(0));
-            print(result.join(', '));
+            // print(result.join(', '));
 
             result = elapsedTime('Insertion sort', insertionSort, numbers.slice(0));
-            print(result.join(', '));
+            // print(result.join(', '));
 
             result = elapsedTime('Merge sort', mergeSort, numbers.slice(0));
-            print(result.join(', '));
+            // print(result.join(', '));
         };
     </script>
 </head>
