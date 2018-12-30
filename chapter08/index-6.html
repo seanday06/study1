@@ -55,13 +55,13 @@
             ctx.lineTo(0, -length);
             ctx.stroke();
             
-            if (length < 50) {
+            if (length < 20) {
                 ctx.restore();
                 return;
             }
             
-            drawTreeFract(ctx, 0, -length, length*0.8, -15);
-            drawTreeFract(ctx, 0, -length, length*0.8, 15);
+            drawTreeFract(ctx, 0, -length, length*0.8, -30);
+            drawTreeFract(ctx, 0, -length, length*0.8, 30);
             
             ctx.restore();
         };
@@ -87,9 +87,9 @@
         };
 
         const drawMandelbrotSet = (ctx, width, height) => {
-            const ratio = 200;
-            let panX = 2;
-            let panY = 1.5;
+            const ratio = 3000;
+            let panX = 0.6;
+            let panY = 0.6;
 
             for (let x = 0; x < width; x++) {
                 for (let y = 0; y < height; y++) {
@@ -114,18 +114,18 @@
             const ctx = myCanvas.getContext("2d");
 
             // Triangle
-            /*
-            const p1 = { x: 0, y: 0 };
-            const p2 = { x: 600, y: 0 };
-            const p3 = { x: 300, y: 600 };
+            
+            const p1 = { x: 0, y: 600 };
+            const p2 = { x: 300, y: 600 - 300 * Math.sqrt(3) };
+            const p3 = { x: 600, y: 600 };
             drawTrangleFract(ctx, p1, p2, p3, 10);
-            */
+            
 
             // Tree
             // drawTreeFract(ctx, 300, 600, 100, 0);
 
             // MandelbrotSet
-            drawMandelbrotSet(ctx, myCanvas.width, myCanvas.height);
+            // drawMandelbrotSet(ctx, myCanvas.width, myCanvas.height);
         };
     </script>
 </head>

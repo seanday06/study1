@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <title>3D Library</title>
+    <style>
+        body { margin: 0; }
+        canvas { width: 100%; height: 100% }
+    </style>
+    <script src="./three.js"></script>
+    <script src="./WebGL.js"></script>
+</head>
+
+<body>
+    <h1>3D Library Three.js</h1>
+    <h2>Line</h2>
+    
+    <div id="output" />
+    <script>
+        if ( WEBGL.isWebGL2Available() === false ) {
+            document.body.appendChild(WEBGL.getWebGL2ErrorMessage());
+        }
+
+        var scene = new THREE.Scene();
+
+        var canvas = document.createElement( 'canvas' );
+        var context = canvas.getContext( 'webgl2' );
+        var renderer = new THREE.WebGLRenderer({ canvas, context });
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3( -10, 0, 0) );
+        geometry.vertices.push(new THREE.Vector3( 0, 10, 0) );
+        geometry.vertices.push(new THREE.Vector3( 10, 0, 0) );
+        var material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
+        var line = new THREE.Line( geometry, material );
+        scene.add( line );
+
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 500);
+        camera.position.set(0, 0, 100);
+        camera.lookAt(0, 0, 0);
+
+        renderer.render( scene, camera );
+    </script>
+</body>
+
+</html>
