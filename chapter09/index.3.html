@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <title>3D Library</title>
+    <style>
+        body { margin: 0; }
+        canvas { width: 100%; height: 100%; background: #000; }
+    </style>
+    <script src="./three.js"></script>
+    <script src="./WebGL.js"></script>
+</head>
+
+<body>
+    <h1>3D Library</h1>
+    <script>
+        if ( WEBGL.isWebGL2Available() === false ) {
+            document.body.appendChild(WEBGL.getWebGL2ErrorMessage());
+        }
+
+        var scene = new THREE.Scene();
+
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        camera.position.x = 2;
+        camera.position.y = 3;
+        camera.position.z = 10;
+
+        // create a point light
+        var pointLight = new THREE.PointLight( 0xFFFF8F );
+        pointLight.position.x = 50;
+        pointLight.position.y = 100;
+        pointLight.position.z = 130;
+        scene.add(pointLight);
+
+        var canvas = document.createElement( 'canvas' );
+        var context = canvas.getContext( 'webgl2' );
+        var renderer = new THREE.WebGLRenderer({ canvas, context });
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+        var geometry, material;
+        material = new THREE.LineBasicMaterial( { color: 0x444444 } );
+
+        geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3( -10, 0, 0) );
+        geometry.vertices.push(new THREE.Vector3( 10, 0, 0) );
+        // geometry.vertices.push(new THREE.Vector3( 1, 0, 0) );
+        var xAxis = new THREE.Line( geometry, material );
+
+        geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3( 0, -10, 0) );
+        geometry.vertices.push(new THREE.Vector3( 0, 10, 0) );
+        var yAxis = new THREE.Line( geometry, material );
+
+        geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3( 0, 0, -100) );
+        geometry.vertices.push(new THREE.Vector3( 0, 0, 10) );
+        var zAxis = new THREE.Line( geometry, material );
+
+        scene.add( xAxis );
+        scene.add( yAxis );
+        scene.add( zAxis );
+/*
+        geometry = new THREE.BoxGeometry( 1, 1, 1, 5, 5, 5 );
+        // var lineMaterial = new THREE.LineBasicMaterial( { color: 0xffffff, transparent: true, opacity: 0.5 } );
+        material = new THREE.MeshNormalMaterial( { } );
+        var cube = new THREE.Mesh( geometry, material );
+        scene.add( cube );
+*/
+        geometry = new THREE.SphereGeometry(3, 20, 20, 0, Math.PI * 2, 0, Math.PI * 2);
+        material = new THREE.MeshNormalMaterial();
+        var sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
+/*
+        geometry = new THREE.CylinderGeometry(1, 1, 2, 20);
+        material = new THREE.MeshPhongMaterial({
+            color: 0xff00ff,
+            side:THREE.DoubleSide,
+        });
+        var cone = new THREE.Mesh(geometry, material);
+        scene.add(cone);
+*/
+        var edges = new THREE.EdgesGeometry( geometry );
+        var line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+        scene.add(line);
+
+/*
+        var animate = function () {
+            requestAnimationFrame( animate );
+
+            // sphere.rotation.x += 0.01;
+            sphere.rotation.y += 0.01;
+
+            renderer.render( scene, camera );
+        };
+
+        animate();
+*/
+        renderer.render( scene, camera );
+    </script>
+</body>
+
+</html>
