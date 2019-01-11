@@ -28,16 +28,32 @@
         camera.position.z = 15;
 
         // create a point light
+        /*
         var pointLight = new THREE.PointLight( 0xFFFF8F );
-        pointLight.position.x = 50;
+        pointLight.position.x = 10;
         pointLight.position.y = 50;
         pointLight.position.z = 0;
         scene.add(pointLight);
+        */
+
+        var spotLight = new THREE.SpotLight( 0xffffff );
+        spotLight.name = 'Spot Light';
+        spotLight.angle = Math.PI / 5;
+        spotLight.penumbra = 0.3;
+        spotLight.position.set( 2, 15, 5 );
+        spotLight.castShadow = true;
+        spotLight.shadow.camera.near = 8;
+        spotLight.shadow.camera.far = 30;
+        spotLight.shadow.mapSize.width = 1024;
+        spotLight.shadow.mapSize.height = 1024;
+        scene.add( spotLight );
 
         var canvas = document.createElement( 'canvas' );
         var context = canvas.getContext( 'webgl2' );
         var renderer = new THREE.WebGLRenderer({ canvas, context });
         renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.BasicShadowMap;
         document.body.appendChild( renderer.domElement );
 
         var geometry, material;
@@ -63,11 +79,25 @@
         scene.add( yAxis );
         scene.add( zAxis );
 
+        geometry = new THREE.PlaneBufferGeometry(500, 500);
+        material = new THREE.MeshPhongMaterial({
+            color: 0xEEEEEE,
+            depthWrite: false,
+        });
+        var ground = new THREE.Mesh( geometry, material );
+        ground.position.set( 0, -1, 0 );
+        ground.rotation.x = - Math.PI / 2;
+        ground.receiveShadow = true;
+        scene.add( ground );
+
         var texture = new THREE.TextureLoader().load( 'images/galaxy.jpg' );
 
         geometry = new THREE.BoxBufferGeometry(3, 3, 3);
         material = new THREE.MeshBasicMaterial({ map: texture });
         var cube = new THREE.Mesh( geometry, material );
+        cube.position.set(0, 4, 0);
+        cube.castShadow = true;
+		cube.receiveShadow = true;
         scene.add( cube );
 /*
         geometry = new THREE.SphereGeometry(3, 20, 20, 0, Math.PI * 2, 0, Math.PI * 2);
@@ -85,6 +115,7 @@
 */
         var edges = new THREE.EdgesGeometry( geometry );
         var line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+        line.position.set(0, 4, 0);
         scene.add(line);
 
 
