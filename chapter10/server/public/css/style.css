@@ -1,0 +1,16 @@
+body {
+    padding: 10px;
+    background: #f9f9f9;
+}
+
+canvas {
+    background: #fff;
+}
+
+h1 {
+    text-align: center;
+}
+
+li {
+    margin: 3px 0;
+}
