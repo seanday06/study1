@@ -11,6 +11,7 @@
     </style>
     <script src="js/three.js"></script>
     <script src="js/WebGL.js"></script>
+    <script src="js/orbitControls.js"></script>
 </head>
 
 <body>
@@ -39,6 +40,14 @@
         var renderer = new THREE.WebGLRenderer({ canvas, context });
         renderer.setSize( window.innerWidth, window.innerHeight );
         document.body.appendChild( renderer.domElement );
+
+        var controls = new THREE.OrbitControls( camera, renderer.domElement );
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
+        controls.screenSpacePanning = false;
+        controls.minDistance = 0;
+        controls.maxDistance = 500;
+        controls.maxPolarAngle = Math.PI / 2;
 
         var geometry, material;
         material = new THREE.LineBasicMaterial( { color: 0x444444 } );
@@ -103,6 +112,9 @@
             camera.position.y = 3 * Math.sin(radian);
             camera.position.z = 10 + 4 * Math.sin(radian);
             */
+
+            controls.update();
+
             renderer.render( scene, camera );
         };
 

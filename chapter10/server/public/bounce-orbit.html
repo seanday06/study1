@@ -11,6 +11,7 @@
     </style>
     <script src="js/three.js"></script>
     <script src="js/WebGL.js"></script>
+    <script src="js/orbitControls.js"></script>
 </head>
 
 <body>
@@ -28,17 +29,41 @@
         camera.position.z = 15;
 
         // create a point light
+        /*
         var pointLight = new THREE.PointLight( 0xFFFF8F );
-        pointLight.position.x = 50;
+        pointLight.position.x = 10;
         pointLight.position.y = 50;
         pointLight.position.z = 0;
         scene.add(pointLight);
+        */
+
+        var spotLight = new THREE.SpotLight( 0xffffff );
+        spotLight.name = 'Spot Light';
+        spotLight.angle = Math.PI / 5;
+        spotLight.penumbra = 0.3;
+        spotLight.position.set( 5, 20, -5 );
+        spotLight.castShadow = true;
+        spotLight.shadow.camera.near = 8;
+        spotLight.shadow.camera.far = 30;
+        spotLight.shadow.mapSize.width = 1024;
+        spotLight.shadow.mapSize.height = 1024;
+        scene.add( spotLight );
 
         var canvas = document.createElement( 'canvas' );
         var context = canvas.getContext( 'webgl2' );
         var renderer = new THREE.WebGLRenderer({ canvas, context });
         renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.BasicShadowMap;
         document.body.appendChild( renderer.domElement );
+
+        var controls = new THREE.OrbitControls( camera, renderer.domElement );
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
+        controls.screenSpacePanning = false;
+        controls.minDistance = 0;
+        controls.maxDistance = 500;
+        controls.maxPolarAngle = Math.PI / 2;
 
         var geometry, material;
         material = new THREE.LineBasicMaterial( { color: 0x444444 } );
@@ -63,18 +88,40 @@
         scene.add( yAxis );
         scene.add( zAxis );
 
+        geometry = new THREE.PlaneBufferGeometry(500, 500);
+        material = new THREE.MeshPhongMaterial({
+            color: 0xEEEEEE,
+            depthWrite: false,
+        });
+        var ground = new THREE.Mesh( geometry, material );
+        ground.position.set( 0, 0, 0 );
+        ground.rotation.x = - Math.PI / 2;
+        ground.receiveShadow = true;
+        scene.add( ground );
+
         var texture = new THREE.TextureLoader().load( 'images/giphy.gif' );
 
+        const radius = 1;
+        const startH = 5 + radius;
+
+/*
         geometry = new THREE.BoxBufferGeometry(3, 3, 3);
         material = new THREE.MeshBasicMaterial({ map: texture });
         var cube = new THREE.Mesh( geometry, material );
+        cube.position.set(0, 4, 0);
+        cube.castShadow = true;
+		cube.receiveShadow = true;
         scene.add( cube );
-/*
-        geometry = new THREE.SphereGeometry(3, 20, 20, 0, Math.PI * 2, 0, Math.PI * 2);
-        material = new THREE.MeshNormalMaterial();
+*/
+        geometry = new THREE.SphereBufferGeometry(radius, 30, 30, 0, Math.PI * 2, 0, Math.PI * 2);
+        // material = new THREE.MeshNormalMaterial();
+        material = new THREE.MeshBasicMaterial({ map: texture });
         var sphere = new THREE.Mesh(geometry, material);
+        sphere.position.set(0, startH, 0);
+        sphere.castShadow = true;
+		sphere.receiveShadow = true;
         scene.add(sphere);
-
+/*
         geometry = new THREE.CylinderGeometry(1, 1, 2, 20);
         material = new THREE.MeshPhongMaterial({
             color: 0xff00ff,
@@ -85,30 +132,65 @@
 */
         var edges = new THREE.EdgesGeometry( geometry );
         var line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+        line.position.set(0, startH, 0);
         scene.add(line);
 
 
         let radian = 0;
 
+        const g = 9.8;
+        let deltaT = 0.01;
+        let t = deltaT;
+        let direction = 1;
+        let y = startH;
+        let x = 0;
+        let z = 0;
+        let v0 = Math.sqrt(2 * g * startH);
+        let vzx = 1;
+        let tzx = t;
+
         var animate = function () {
             requestAnimationFrame( animate );
 
-            line.rotation.x += 0.01;
-            line.rotation.y += 0.01;
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
+            // line.rotation.x += 0.01;
+            // line.rotation.y += 0.01;
+            // sphere.rotation.x += 0.01;
+            // sphere.rotation.y += 0.01;
+            y = direction === 1
+                ? startH - g * t * t / 2 : radius + v0 * t - g * t * t / 2;
+            x = -vzx * tzx;
+            z = vzx * tzx;
+
+            if (sphere.position.y <= radius) {
+                direction = -1;
+                t = 0;
+            }
+            if (sphere.position.y >= startH + radius) {
+                direction = 1;
+            }
+
+            line.position.x = x;
+            sphere.position.x = x;
+            line.position.y = y;
+            sphere.position.y = y;
+            line.position.z = z;
+            sphere.position.z = z;
+            t += deltaT;
+
             /*
             radian += 0.01;
             camera.position.x = 2 * Math.cos(radian);
             camera.position.y = 3 * Math.sin(radian);
             camera.position.z = 10 + 4 * Math.sin(radian);
             */
+
+            controls.update();
+
             renderer.render( scene, camera );
         };
 
         animate();
-
-//        renderer.render( scene, camera );
+        // renderer.render( scene, camera );
     </script>
 </body>
 

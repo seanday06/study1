@@ -90,7 +90,7 @@
         ground.receiveShadow = true;
         scene.add( ground );
 
-        var texture = new THREE.TextureLoader().load( 'images/galaxy.jpg' );
+        var texture = new THREE.TextureLoader().load( 'images/giphy.gif' );
 
         const radius = 1;
         const startH = 5 + radius;
@@ -134,8 +134,12 @@
         let t = deltaT;
         let direction = 1;
         let y = startH;
+        let x = 0;
+        let z = 0;
         let v0 = Math.sqrt(2 * g * startH);
-        
+        let vzx = 1;
+        let tzx = t;
+
         var animate = function () {
             requestAnimationFrame( animate );
 
@@ -145,6 +149,8 @@
             // sphere.rotation.y += 0.01;
             y = direction === 1
                 ? startH - g * t * t / 2 : radius + v0 * t - g * t * t / 2;
+            x = -vzx * tzx;
+            z = vzx * tzx;
 
             if (sphere.position.y <= radius) {
                 direction = -1;
@@ -154,8 +160,12 @@
                 direction = 1;
             }
 
+            line.position.x = x;
+            sphere.position.x = x;
             line.position.y = y;
             sphere.position.y = y;
+            line.position.z = z;
+            sphere.position.z = z;
             t += deltaT;
 
             /*
