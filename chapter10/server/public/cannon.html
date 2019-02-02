@@ -25,18 +25,24 @@
         var scene = new THREE.Scene();
 
         var camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 1000);
-        camera.position.x = 1;
-        camera.position.y = 2;
-        camera.position.z = 15;
+        camera.position.x = 20;
+        camera.position.y = 20;
+        camera.position.z = 200;
 
         // create a point light
         
         var pointLight = new THREE.PointLight( 0xFFFF8F );
         pointLight.position.x = 10;
         pointLight.position.y = 50;
-        pointLight.position.z = 0;
+        pointLight.position.z = -200;
         scene.add(pointLight);
-        
+
+        var pointLight2 = new THREE.PointLight( 0xFFFF8F );
+        pointLight2.position.x = -10;
+        pointLight2.position.y = 50;
+        pointLight2.position.z = 200;
+        scene.add(pointLight2);
+
         var canvas = document.createElement( 'canvas' );
         var context = canvas.getContext( 'webgl2' );
         var renderer = new THREE.WebGLRenderer({ canvas, context });
@@ -53,31 +59,39 @@
         controls.maxDistance = 500;
         controls.maxPolarAngle = Math.PI / 2;
 
+        var objects = [];
+        var raycaster = new THREE.Raycaster();
+        var mouse = new THREE.Vector2();
+        var INTERSECTED;
+        var bulletFire = false;
+
         var geometry, material;
-        material = new THREE.LineBasicMaterial( { color: 0x444444 } );
 
-        geometry = new THREE.Geometry();
-        geometry.vertices.push(new THREE.Vector3( -10, 0, 0) );
-        geometry.vertices.push(new THREE.Vector3( 10, 0, 0) );
-        // geometry.vertices.push(new THREE.Vector3( 1, 0, 0) );
-        var xAxis = new THREE.Line( geometry, material );
+        const drawGround = (width, depth) => {
+            material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
 
-        geometry = new THREE.Geometry();
-        geometry.vertices.push(new THREE.Vector3( 0, -10, 0) );
-        geometry.vertices.push(new THREE.Vector3( 0, 10, 0) );
-        var yAxis = new THREE.Line( geometry, material );
+            geometry = new THREE.Geometry();
+            geometry.vertices.push(new THREE.Vector3( -width / 2, 0, 0) );
+            geometry.vertices.push(new THREE.Vector3( width / 2, 0, 0) );
+            var xAxis = new THREE.Line( geometry, material );
 
-        geometry = new THREE.Geometry();
-        geometry.vertices.push(new THREE.Vector3( 0, 0, -100) );
-        geometry.vertices.push(new THREE.Vector3( 0, 0, 10) );
-        var zAxis = new THREE.Line( geometry, material );
+            material = new THREE.LineBasicMaterial( { color: 0x999999 } );
 
-        scene.add( xAxis );
-        scene.add( yAxis );
-        scene.add( zAxis );
+            geometry = new THREE.Geometry();
+            geometry.vertices.push(new THREE.Vector3( 0, 0, 0) );
+            geometry.vertices.push(new THREE.Vector3( 0, 100, 0) );
+            var yAxis = new THREE.Line( geometry, material );
 
-        const drawGround = () => {
-            geometry = new THREE.PlaneBufferGeometry(500, 500);
+            geometry = new THREE.Geometry();
+            geometry.vertices.push(new THREE.Vector3( 0, 0, -depth / 2) );
+            geometry.vertices.push(new THREE.Vector3( 0, 0, depth / 2) );
+            var zAxis = new THREE.Line( geometry, material );
+
+            scene.add( xAxis );
+            scene.add( yAxis );
+            scene.add( zAxis );
+
+            geometry = new THREE.PlaneBufferGeometry(width, depth);
             material = new THREE.MeshPhongMaterial({
                 color: 0xeeeeee,
                 depthWrite: false,
@@ -89,22 +103,20 @@
             scene.add( ground );
         };
 
-        const drawBullet = (radius, position) => {
-            geometry = new THREE.SphereBufferGeometry(radius, 32, 32, 0, Math.PI * 2, 0, Math.PI * 2);
-            material = new THREE.MeshPhongMaterial({ color: 0xff0000 });
-            var sphere = new THREE.Mesh(geometry, material);
-            sphere.position.set(position.x, position.y, position.z);
-            sphere.castShadow = true;
-            sphere.receiveShadow = true;
-            scene.add(sphere);
+        const drawBullet = (bullet, radius, position) => {
+            bullet.position.set(position.x, position.y, position.z);
+            bullet.castShadow = true;
+            bullet.receiveShadow = true;
+            scene.add(bullet);
         }
 
         const drawCannon = (radius, thickness, height, position) => {
             var outerGeometry = new THREE.CylinderGeometry(radius, radius, height, 32, 1);
             var innerGeometry = new THREE.CylinderGeometry(radius-thickness, radius-thickness, height, 32, 1);
-            material = new THREE.MeshNormalMaterial({
+            material = new THREE.MeshLambertMaterial({
                 color: 0x999999,
-                side: THREE.DoubleSide,
+                emissive: 0xcccccc,
+                // side: THREE.DoubleSide,
             });
 
             var outerCylinder = new ThreeBSP(outerGeometry);
@@ -112,24 +124,159 @@
 
             var cannon = innerCylinder.union(outerCylinder).toMesh(material);
             cannon.position.set(position.x, position.y, position.z);
-            cannon.rotation.x = Math.PI / 4;
+            cannon.rotation.x = -Math.PI / 4;
             scene.add( cannon );
+
+/*
+            geometry = new THREE.CylinderGeometry(radius, radius, radius);
+            material = new THREE.MeshLambertMaterial({
+                color: 0x339900,
+                emissive: 0x66cc33,
+            });
+            var trigger = new THREE.Mesh( geometry, material );
+            trigger.position.set(position.x + radius, position.y, position.z);
+            trigger.rotation.z = -Math.PI / 2;
+            scene.add(trigger);
+*/
+            objects.push(cannon);
         };
 
-        drawGround();
-        drawBullet(1.6, { x: 5, y: 10, z: 0 });
-        drawCannon(2, 0.4, 20, { x: 10, y: 10, z: 0 });
+        const drawTarget = (width, height, depth, position) => {
+            var texture = new THREE.TextureLoader().load( 'images/giphy.gif' );
 
-        var animate = function () {
-            requestAnimationFrame( animate );
+            geometry = new THREE.BoxBufferGeometry(width, height, depth);
+            material = new THREE.MeshBasicMaterial({ map: texture });
+            var cube = new THREE.Mesh( geometry, material );
+            cube.position.set(position.x, position.y, position.z);
+            scene.add( cube );
+
+            objects.push(cube);
+        }
+
+        const onWindowResize = () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+        }
+
+        const onWindowMouseMove = (e) => {
+            e.preventDefault();
+            mouse.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
+        };
+
+        const onWindowMouseDown = (e) => {
+            e.preventDefault();
+            mouse.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
+
+            var intersects = raycaster.intersectObjects( objects );
+            if ( intersects.length > 0 ) {
+                if ( INTERSECTED != intersects[ 0 ].object ) {
+                    if ( INTERSECTED ) {
+                        if (INTERSECTED.material.emissive) {
+                            INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+                        }
+                    }
+
+                    INTERSECTED = intersects[ 0 ].object;
+                    if (INTERSECTED.material.emissive) {
+                        INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+                        INTERSECTED.material.emissive.setHex( 0xff0000 );
+                    }
+                }
+                
+                bulletFire = !bulletFire;
+            }
+        };
+
+        drawGround(500, 500);
+
+        const bulletRadius = 1.6;
+        const bulletPos = { x: 0, y: 10, z: 150 };
+        geometry = new THREE.SphereBufferGeometry(bulletRadius, 32, 32, 0, Math.PI * 2, 0, Math.PI * 2);
+        material = new THREE.MeshPhongMaterial({ color: 0xffff00 });
+        var bullet = new THREE.Mesh(geometry, material);
+        drawBullet(bullet, bulletRadius, bulletPos);
+
+        drawCannon(2, 0.4, 20, { x: 0, y: 10, z: 150 });
+        drawTarget(25, 20, 5, { x: 0, y: 10, z: -150 });
+
+        window.addEventListener( 'resize', onWindowResize, false );
+        document.addEventListener( 'mousemove', onWindowMouseMove, false );
+		document.addEventListener( 'mousedown', onWindowMouseDown, false );
+
+        const g = 9.8;
+        let deltaT = 0.01;
+        let t = deltaT;
+        let tY = t;
+        let direction = 1;
+        let y = bulletPos.y;
+        let x = 0;
+        let z = 0;
+        let vY = 30; // Math.sqrt(2 * g * bulletPos.y);
+        let vZ = -vY;
+        let vX = 0;
+
+        const render = () => {
+            raycaster.setFromCamera( mouse, camera );
+            var intersects = raycaster.intersectObjects( objects );
+            if ( intersects.length > 0 ) {
+                if ( INTERSECTED != intersects[ 0 ].object ) {
+                    if ( INTERSECTED && INTERSECTED.material.emissive ) {
+                        INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+                    }
+                    INTERSECTED = intersects[ 0 ].object;
+                    if ( INTERSECTED.material.emissive ) {
+                        INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+                        INTERSECTED.material.emissive.setHex( 0xff0000 );
+                    }
+                }
+            } else {
+                if ( INTERSECTED && INTERSECTED.material.emissive ) {
+                    INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+                }
+                INTERSECTED = null;
+            }
 
             controls.update();
 
             renderer.render( scene, camera );
         };
 
+        const animate = () => {
+            requestAnimationFrame( animate );
+
+            if (bulletFire) {
+                if (bullet.position.y <= 0) {
+                    tY = 0;
+                    vY = vY * 0.9;
+                }
+
+                x = bulletPos.x + vX * t;
+                y = bulletPos.y + vY * tY - g * tY * tY / 2;
+                z = bulletPos.z + vZ * t;
+/*                
+                if (bullet.position.y >= bulletPos.y + bulletRadius) {
+                    direction = 1;
+                }
+*/
+                bullet.position.x = x;
+                bullet.position.y = y;
+                bullet.position.z = z;
+                t += deltaT;
+                tY += deltaT;
+            } else {
+                x = bulletPos.x;
+                y = bulletPos.y;
+                z = bulletPos.z;
+                t = 0;
+                tY = t;
+            }
+
+            render();
+        };
+
         animate();
-        // renderer.render( scene, camera );
+        // render();
     </script>
 </body>
 
