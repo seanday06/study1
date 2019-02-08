@@ -161,7 +161,9 @@
 
         const onWindowMouseMove = (e) => {
             e.preventDefault();
-            mouse.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
+            const x = ( event.clientX / window.innerWidth ) * 2 - 1;
+            const y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+            mouse.set( x, y);
         };
 
         const onWindowMouseDown = (e) => {
@@ -205,14 +207,14 @@
 		document.addEventListener( 'mousedown', onWindowMouseDown, false );
 
         const g = 9.8;
-        let deltaT = 0.01;
+        let deltaT = 0.03;
         let t = deltaT;
         let tY = t;
         let direction = 1;
         let y = bulletPos.y;
         let x = 0;
         let z = 0;
-        let vY = 30; // Math.sqrt(2 * g * bulletPos.y);
+        let vY = 25; // Math.sqrt(2 * g * bulletPos.y);
         let vZ = -vY;
         let vX = 0;
 
@@ -248,7 +250,7 @@
             if (bulletFire) {
                 if (bullet.position.y <= 0) {
                     tY = 0;
-                    vY = vY * 0.9;
+                    vY = vY * 1;
                 }
 
                 x = bulletPos.x + vX * t;
