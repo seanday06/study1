@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <title>JavaScript Scope</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/print.js"></script>
+</head>
+
+<body>
+    <h1>JavaScript Scope</h1>
+
+    <script>
+        let a = 1; 
+        console.log('a', a);
+
+        // console.log('d', d);
+        console.log('e', e);
+
+        var f1 = function() {
+            var b = 2;
+            console.log('b', b);
+        };
+
+        var g = 0;
+        for (let i = 0; i < 5; i++) {
+            var h = 3;
+            console.log('for ', i + h);
+        }
+
+        f1();
+
+        // let c = b;
+        // console.log('c', c);
+
+        let d = 4;
+        var e = 5;
+
+        var j = h;
+        console.log('j', j);
+    </script>
+</body>
+
+</html>

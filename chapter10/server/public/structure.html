@@ -8,6 +8,12 @@
     <style>
         body { margin: 0; }
         canvas { width: 100%; height: 100%; background: #000; }
+		h1 {
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			margin: 10px;
+		}
     </style>
     <script src="js/three.js"></script>
     <script src="js/WebGL.js"></script>
@@ -21,22 +27,39 @@
 </head>
 
 <body>
-    <h1>3D Library</h1>
-
     <div id="container">
         <br /><br /><br /><br /><br />Loading...
     </div>
+
+	<div id="board">
+		<h1>3D Library</h1>
+	</div>
+	
 
     <script>
         if ( WEBGL.isWebGL2Available() === false ) {
             document.body.appendChild(WEBGL.getWebGL2ErrorMessage());
         }
 
-        // Graphics
+		// Graphics
+		const sceneBackgroundColor = 0xbbbbff;
+
+		const ambientLightColor = 0x888888;
+		const directionalLightColor = 0xffffff;
+		const directionalLightIntensity = 1;
+		const directionalLightPosition = { x: -20, y: 15, z: 20 };
+		const directionalLightShadow = 15;
+		const directionalLightShadowClippingPlane = { near: 2, far: 1024 };
+		const directionalLightShadowMapSize = { x: 1024, y: 1024 };
+
+		const orbitControlsTarget = { x: 0, y: 0, z: 0 };
+
+		const cameraPosition = { x: -20, y: 10, z: 20 };
+
         let camera, controls, scene, renderer;
-        let stats, container;
+		let stats, container;
+		
         let textureLoader;
-        let clock = new THREE.Clock();
 
         let mouseCoords = new THREE.Vector2();
 		let raycaster = new THREE.Raycaster();
@@ -67,57 +90,58 @@
         let numObjectsToRemove = 0;
         let impactPoint = new THREE.Vector3();
         let impactNormal = new THREE.Vector3();
-
-        const onWindowResize = () => {
-			camera.aspect = window.innerWidth / window.innerHeight;
-			camera.updateProjectionMatrix();
-			renderer.setSize( window.innerWidth, window.innerHeight );
-        };
         
         const initGraphics = () => {
-            camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.2, 2000 );
-			camera.position.set( -14, 8, 16 );
-
-            controls = new THREE.OrbitControls( camera );
-			controls.target.set( 0, 2, 0 );
-			controls.update();
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.2, 2000);
+			camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 
 			scene = new THREE.Scene();
-            scene.background = new THREE.Color( 0xbfd1e5 );
-			const ambientLight = new THREE.AmbientLight( 0x707070 );
-			scene.add( ambientLight );
-            
+            scene.background = new THREE.Color(sceneBackgroundColor);
+			const ambientLight = new THREE.AmbientLight(ambientLightColor);
+			scene.add(ambientLight);
+			
+            const light = new THREE.DirectionalLight(directionalLightColor, directionalLightIntensity);
+			light.position.set(directionalLightPosition.x, directionalLightPosition.y, directionalLightPosition.z);
+			
+			light.castShadow = true;            
+			light.shadow.camera.left = -directionalLightShadow;
+			light.shadow.camera.right = directionalLightShadow;
+			light.shadow.camera.top = directionalLightShadow;
+			light.shadow.camera.bottom = -directionalLightShadow;
+			light.shadow.camera.near = directionalLightShadowClippingPlane.near;
+			light.shadow.camera.far = directionalLightShadowClippingPlane.far;
+			light.shadow.mapSize.x = directionalLightShadowMapSize.x;
+			light.shadow.mapSize.y = directionalLightShadowMapSize.y;
+			
+			scene.add(light);
+			
 			renderer = new THREE.WebGLRenderer();
-			renderer.setPixelRatio( window.devicePixelRatio );
-			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMap.enabled = true;
+
+            controls = new THREE.OrbitControls(camera);
+			controls.target.set(orbitControlsTarget.x, orbitControlsTarget.y, orbitControlsTarget.z);
+			controls.update();
             
             textureLoader = new THREE.TextureLoader();
 
-            const light = new THREE.DirectionalLight( 0xffffff, 1 );
-            const d = 14;
-			light.position.set( -10, 18, 5 );
-			light.castShadow = true;            
-			light.shadow.camera.left = -d;
-			light.shadow.camera.right = d;
-			light.shadow.camera.top = d;
-			light.shadow.camera.bottom = -d;
-			light.shadow.camera.near = 2;
-			light.shadow.camera.far = 50;
-			light.shadow.mapSize.x = 1024;
-            light.shadow.mapSize.y = 1024;           
-			scene.add( light );
-
-            container = document.getElementById( 'container' );
+            container = document.getElementById('container');
 			container.innerHTML = "";
-            container.appendChild( renderer.domElement );
+            container.appendChild(renderer.domElement);
 
-            stats = new Stats();
+			stats = new Stats();
 			stats.domElement.style.position = 'absolute';
 			stats.domElement.style.top = '0px';
+			stats.domElement.style.left = 'auto';
+			stats.domElement.style.right = '0px';
 			container.appendChild( stats.domElement );
 			
-			window.addEventListener( 'resize', onWindowResize, false );
+			window.addEventListener('resize', () => {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+			}, false);
         };
 
         const initPhysics = () => {
@@ -222,12 +246,12 @@
 			color = color || createRandomColor();
 			return new THREE.MeshPhongMaterial( { color: color } );
         };
-        
-        const createObjects = () => {
-            // Ground
-            pos.set( 0, - 0.5, 0 );
+
+		const createGround = (x, y, z, dx, dy, dz) => {
+			let pos = new THREE.Vector3();
+            pos.set(x, y, z);
 			quat.set( 0, 0, 0, 1 );
-			var ground = createParalellepipedWithPhysics(100, 1, 100, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0x999999 } ) );
+			var ground = createParalellepipedWithPhysics(dx, dy, dz, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0x999999 } ) );
 			ground.receiveShadow = true;
 			textureLoader.load( "images/grid.png", ( texture ) => {
 				texture.wrapS = THREE.RepeatWrapping;
@@ -236,7 +260,9 @@
 				ground.material.map = texture;
 				ground.material.needsUpdate = true;
             } );
-            
+		};
+
+        const createObjects = () => {
 			// Stones
 			var stoneMass = 120;
 			var stoneHalfExtents = new THREE.Vector3(1, 2, 0.15 );
@@ -250,6 +276,7 @@
 				createObject( stoneMass, stoneHalfExtents, pos, quat, createMaterial( 0xB0B0B0 ) );
             }			
         };
+
 
         const initInput = () => {
 			window.addEventListener( 'mousedown', function( event ) {
@@ -363,13 +390,7 @@
 			numObjectsToRemove = 0;
 		}
 
-        const init = () => {
-            initGraphics();
-            initPhysics();
-            createObjects();
-            initInput();
-        };
-
+        let clock = new THREE.Clock();
         const render = () => {
 			var deltaTime = clock.getDelta();
 			updatePhysics( deltaTime );
@@ -383,8 +404,18 @@
 			stats.update();
         }
         
-        // Main process
-        init();
+		// Main process
+		
+		// initialize
+		initGraphics();
+		initPhysics();
+
+		// create objects
+		createGround(0, - 0.5, 0, 20, 1, 20);
+
+		createObjects();
+		initInput();
+
         animate();
     </script>
 </body>
