@@ -1,3 +1,20 @@
+nav {
+    background-color: #4db6ac;
+}
+
+nav .brand-logo {
+    padding: 0 10px;
+}
+
 .page-footer {
     padding: 0;
+    background-color: #4db6ac;
+}
+
+.page-footer .footer-copyright {
+    padding: 10px;
+}
+
+.center {
+    text-align: center;
 }
