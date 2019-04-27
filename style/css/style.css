@@ -1,0 +1,45 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: url(../images/bg.jpg);
+}
+
+header {
+    border-bottom: solid 1px #999;
+}
+
+header h1 {
+    color: #fff;
+    text-align: center;
+}
+
+footer {
+    border-top: solid 1px #999;
+}
+
+section {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+section p {
+    color: #ff8000;
+}
+
+.half {
+    float: left;
+    
+    width: 50%;
+    max-width: 50%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.half img {
+    width: 100%;
+}

@@ -1,10 +1,25 @@
+body {
+    background: url(../images/bg.jpg) no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
 nav {
-    background-color: #4db6ac;
+    border-bottom: solid 1px #999;
+    background: transparent;
 }
 
 nav .brand-logo {
     padding: 0 10px;
+    color: #f57c00;
     text-shadow: 2px 2px #333;
+}
+
+.greeting {
+    color: #fff;
+}
+.greeting p {
+    font-size: 1.3em;
 }
 
 .page-footer {
