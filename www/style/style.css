@@ -1,5 +1,5 @@
 @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
-@import url('https://fonts.googleapis.com/css?family=Nanum+Brush+Script');
+@import url('https://fonts.googleapis.com/css?family=Nanum+Myeongjo');
 
 body {
     background: url(../images/bg.jpg) no-repeat;
@@ -17,7 +17,12 @@ nav .brand-logo {
     padding: 0 10px;
     color: #f57c00;
     text-shadow: 2px 2px #333;
-    font-family: 'Nanum Brush Script', cursive;
+    font-family: 'Nanum Myeongjo', serif;
+}
+
+nav li a:hover {
+    color: #f57c00;
+    font-size: 1.3em;
 }
 
 .greeting {
