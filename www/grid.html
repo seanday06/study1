@@ -12,9 +12,29 @@
 <body>
     <div class="row">
         <div class="col s12">
-            <ul id="slide-out" class="sidenav">
-                sidebar area
-            </ul>
+            <div id="slide-out" class="sidenav">
+                <ul class="collapsible">
+                    <li>
+                        <div class="collapsible-header"><i class="material-icons">filter_drama</i>소개</div>
+                        <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header"><i class="material-icons">place</i>물리학</div>
+                        <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header"><i class="material-icons">whatshot</i>프로그래밍</div>
+                        <div class="collapsible-body">
+                            <div class="collection">
+                                <a href="./brick-game/index.html" class="collection-item">브릭 게임</a>
+                                <a href="#!" class="collection-item active">Alvin</a>
+                                <a href="#!" class="collection-item">Alvin</a>
+                                <a href="#!" class="collection-item">Alvin</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
             <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a
         </div>
     </div>    
@@ -38,8 +58,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var elems = document.querySelectorAll('.sidenav');
-            var instances = M.Sidenav.init(elems);
+            var sideNavs = document.querySelectorAll('.sidenav');
+            var instances = M.Sidenav.init(sideNavs);
+
+            var collapsibles = document.querySelectorAll('.collapsible');
+            var instances = M.Collapsible.init(collapsibles);
         });
     </script>
 </body>

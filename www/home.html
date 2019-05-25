@@ -10,85 +10,124 @@
     <link rel="stylesheet" href="style/style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="col s12">
-                <nav>
-                    <div class="nav-wrapper">
-                        <a href="#" class="brand-logo">한승민의 홈페이지</a>
-                        <ul id="nav-mobile" class="right hide-on-med-and-down">
-                            <li><a href="aboutMe.html">한승민</a></li>
-                            <li><a href="physics.html">물리학</a></li>
-                            <li><a href="programming.html">프로그래밍</a></li>
-                            <li><a href="source.html">출처</a></li>
-                        </ul>
-                    </div>
-                </nav>
+    <div class="row">
+        <div class="col s12">
+            <nav>
+                <div class="nav-wrapper">
+                    <a href="#" data-target="slide-out" class="sidenav-trigger show-on-large"><i class="material-icons">menu</i></a
+                    <a href="#" class="brand-logo">한승민의 홈페이지</a>
+                </div>
+            </nav>
+            <div id="slide-out" class="sidenav">
+                <ul class="collapsible">
+                    <li>
+                        <div class="collapsible-header"><i class="material-icons">face</i>소개</div>
+                        <div class="collapsible-body">
+                            <div class="collection">
+                                <a href="./aboutMe.html" class="collection-item">About me</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header"><i class="material-icons">public</i>물리학</div>
+                        <div class="collapsible-body">
+                            <div class="collection">
+                                <a href="./physics.html" class="collection-item">Physics</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header"><i class="material-icons">functions</i>수학</div>
+                        <div class="collapsible-body">
+                            <div class="collection">
+                                <a href="./mathmatics.html" class="collection-item">Mathmatics</a>
+                            </div>
+                        </div>
+                    </li>    
+                    <li>
+                        <div class="collapsible-header"><i class="material-icons">computer</i>프로그래밍</div>
+                        <div class="collapsible-body">
+                            <div class="collection">
+                                <a href="./brickGame.html" class="collection-item">Brick game</a>
+                                <a href="./stone.html" class="collection-item">3D Stone</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
-        <div class="row">
-            <div class="col s12">
-                <img id="homeImage" class="responsive-img" src="./images/galaxy.jpg">
-            </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <img id="homeImage" class="responsive-img" src="./images/galaxy.jpg">
         </div>
-        <div class="row">
-            <div class="col s4">
-                <div class="card">
-                    <div class="card-image waves-effect waves-block waves-light">
-                        <img class="activator" src="images/giphy.gif">
-                    </div>
-                    <div class="card-content">
-                        <span class="card-title activator grey-text text-darken-4">Greeting<i class="material-icons right">more_vert</i></span>
-                        <p><a href="#">This is a link</a></p>
-                    </div>
-                    <div class="card-reveal">
-                        <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-                        <p>I am Korean student who loves physics and programming. I want to upload my project in here. Thank you for visiting here.ㅇㅅㅇ</p>
-                    </div>
+    </div>
+    <div class="row">
+        <div class="col s4">
+            <div class="card">
+                <div class="card-image waves-effect waves-block waves-light">
+                    <img class="activator" src="images/giphy.gif">
                 </div>
-            </div>
-            <div class="col s4">
-                <div class="card">
-                    <div class="card-image waves-effect waves-block waves-light">
-                        <img class="activator" src="images/giphy.gif">
-                    </div>
-                    <div class="card-content">
-                        <span class="card-title activator grey-text text-darken-4">Greeting<i class="material-icons right">more_vert</i></span>
-                        <p><a href="#">This is a link</a></p>
-                    </div>
-                    <div class="card-reveal">
-                        <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-                        <p>Here is some more information about this product that is only revealed once clicked on.</p>
-                    </div>
+                <div class="card-content">
+                    <span class="card-title activator grey-text text-darken-4">Greeting<i class="material-icons right">more_vert</i></span>
+                    <p><a href="#">This is a link</a></p>
                 </div>
-            </div>
-            <div class="col s4">
-                <div class="card">
-                    <div class="card-image waves-effect waves-block waves-light">
-                        <img class="activator" src="images/giphy.gif">
-                    </div>
-                    <div class="card-content">
-                        <span class="card-title activator grey-text text-darken-4">Greeting<i class="material-icons right">more_vert</i></span>
-                        <p><a href="#">This is a link</a></p>
-                    </div>
-                    <div class="card-reveal">
-                        <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
-                        <p>Here is some more information about this product that is only revealed once clicked on.</p>
-                    </div>
+                <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
+                    <p>I am Korean student who loves physics and programming. I want to upload my project in here. Thank you for visiting here.ㅇㅅㅇ</p>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col s12">
-                <footer class="page-footer">
-                    <div class="footer-copyright">
-                        © 2019 Han Seungmin
-                    </div>
-                </footer>                
+        <div class="col s4">
+            <div class="card">
+                <div class="card-image waves-effect waves-block waves-light">
+                    <img class="activator" src="images/giphy.gif">
+                </div>
+                <div class="card-content">
+                    <span class="card-title activator grey-text text-darken-4">Greeting<i class="material-icons right">more_vert</i></span>
+                    <p><a href="#">This is a link</a></p>
+                </div>
+                <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
+                    <p>Here is some more information about this product that is only revealed once clicked on.</p>
+                </div>
             </div>
+        </div>
+        <div class="col s4">
+            <div class="card">
+                <div class="card-image waves-effect waves-block waves-light">
+                    <img class="activator" src="images/giphy.gif">
+                </div>
+                <div class="card-content">
+                    <span class="card-title activator grey-text text-darken-4">Greeting<i class="material-icons right">more_vert</i></span>
+                    <p><a href="#">This is a link</a></p>
+                </div>
+                <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
+                    <p>Here is some more information about this product that is only revealed once clicked on.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <footer class="page-footer">
+                <div class="footer-copyright">
+                    © 2019 Han Seungmin
+                </div>
+            </footer>                
         </div>
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var sideNavs = document.querySelectorAll('.sidenav');
+            var instances = M.Sidenav.init(sideNavs);
+
+            var collapsibles = document.querySelectorAll('.collapsible');
+            var instances = M.Collapsible.init(collapsibles);
+        });
+    </script>
 </body>
 </html>
