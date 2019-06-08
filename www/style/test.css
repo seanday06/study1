@@ -1,0 +1,20 @@
+body {
+    background: #ccc;
+}
+h1 {
+    color: #00f;
+}
+p {
+    font-size: 16px;
+}
+
+#blue {
+    color: #00f;
+}
+#red {
+    color: #f00;
+}
+
+.bold {
+    font-weight: bold;
+}

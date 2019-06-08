@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <title>3D using three.js</title>
+    <link rel="stylesheet" href="style/style.css" />
+</head>
+<body>
+    <header>
+        <h1>3D using three.js</h1>
+        <h3>5. Sphere</h3>
+        <a href="index.html">Home</a>
+    </header>
+    <main>
+    </main>
+
+    <script src="https://threejs.org/build/three.js"></script>
+    <script src="js/scene.js"></script>
+    <script>
+        const { scene, camera, renderer } = initGraphics();
+        const sphere = createSphere();
+        scene.add(sphere);
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        function onMouseMove( event ) {
+            // calculate mouse position in normalized device coordinates
+            // (-1 to +1) for both components
+            mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+            mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+            console.log('mouse', { x: mouse.x, y: mouse.y });
+        }
+
+        window.addEventListener( 'mousemove', onMouseMove, false );
+
+        function animate() {
+            requestAnimationFrame( animate );
+
+            //sphere.rotation.x += 0.01;
+            //sphere.rotation.y += 0.01;
+            //sphere.rotation.z += 0.01;
+
+            // update the picking ray with the camera and mouse position
+            raycaster.setFromCamera( mouse, camera );
+
+            // calculate objects intersecting the picking ray
+            var intersects = raycaster.intersectObjects( scene.children );
+            console.log('intersects', intersects.length);
+            for ( var i = 0; i < intersects.length; i++ ) {
+
+                intersects[ i ].object.material.color.set( 0x00ff00 );
+
+            }
+            
+            renderer.render( scene, camera );
+        }
+
+        animate();
+    </script>
+</body>
+</html>

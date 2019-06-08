@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Group</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+    <link rel="stylesheet" href="style/style.css" />
+    <script src="https://threejs.org/build/three.js"></script>
+    <script src="js/webGL.js"></script>
+    <script src="js/orbitControls.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Group</h1>
+    </header>
+    <main>
+        <div id="scene-container"></div>
+    </main>
+    <script src="js/myThree.js"></script>
+    <script>
+        MY_THREE.initGraphics({
+            cameraPos: { x: 0, y: 0, z: 10 },
+        });
+
+        // geometries
+        const nose = new THREE.CylinderBufferGeometry(0.75, 0.75, 3, 12);
+        const cabin = new THREE.BoxBufferGeometry(2, 2.25, 1.5);
+        const chimney = new THREE.CylinderBufferGeometry(0.3, 0.1, 0.5);
+
+        // we can reuse a single cylinder geometry for all 4 wheels
+        const wheel = new THREE.CylinderBufferGeometry(0.4, 0.4, 1.75, 16);
+        wheel.rotateX(Math.PI / 2);
+
+        // materials
+        const bodyMaterial = new THREE.MeshStandardMaterial({
+            color: 0xff3333, // red
+            flatShading: true,
+        });
+
+        // just as with textures, we need to put colors into linear color space
+        bodyMaterial.color.convertSRGBToLinear();
+
+        const detailMaterial = new THREE.MeshStandardMaterial({
+            color: 0x333333, // darkgrey
+            flatShading: true,
+        });
+        detailMaterial.color.convertSRGBToLinear();
+
+        // create a Group to hold the pieces of the train
+        const train = new THREE.Group();
+
+        const trainNose = new THREE.Mesh(nose, bodyMaterial);
+        trainNose.rotation.z = Math.PI / 2;
+        trainNose.position.x = -1;
+
+        const trainCabin = new THREE.Mesh(cabin, bodyMaterial);
+        trainCabin.position.set(1.5, 0.4, 0);
+
+        const trainChimney = new THREE.Mesh(chimney, detailMaterial);
+        trainChimney.position.set(-2, 0.9, 0);
+
+        const smallWheelRear = new THREE.Mesh(wheel, detailMaterial);
+        smallWheelRear.position.set(0, -0.5, 0);
+
+        const smallWheelCenter = smallWheelRear.clone();
+        smallWheelCenter.position.x = -1;
+
+        const smallWheelFront = smallWheelRear.clone();
+        smallWheelFront.position.x = -2;
+
+        const bigWheel = smallWheelRear.clone();
+        bigWheel.scale.set(2, 2, 1.25);
+        bigWheel.position.set(1.5, -0.1, 0);
+
+        train.add(
+            trainNose,
+            trainCabin,
+            trainChimney,
+            smallWheelRear,
+            smallWheelCenter,
+            smallWheelFront,
+            bigWheel,
+        );
+
+        // add the mesh to the scene
+        MY_THREE.addToScene(train);
+
+        MY_THREE.animate();
+    </script>
+</body>
+</html>

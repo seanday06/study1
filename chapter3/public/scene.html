@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scene</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+    <link rel="stylesheet" href="style/style.css" />
+    <script src="https://threejs.org/build/three.js"></script>
+    <script src="js/webGL.js"></script>
+    <script src="js/orbitControls.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Scene</h1>
+    </header>
+    <main>
+        <div id="scene-container"></div>
+    </main>
+    <script src="js/myThree.js"></script>
+    <script>
+        MY_THREE.initGraphics({
+            cameraPos: { x: 0, y: 0, z: 10 },
+        });
+
+        // create a geometry
+        const geometry = new THREE.BoxBufferGeometry(2, 2, 2);
+
+        // Load a texture. See the note in chapter 4 on working locally, or the page
+        // https://threejs.org/docs/#manual/introduction/How-to-run-things-locally
+        // if you run into problems here
+        const texture = MY_THREE.textureLoader.load('images/uv_test_bw_1024.png');
+
+        // set the "color space" of the texture
+        texture.encoding = THREE.sRGBEncoding;
+
+        // reduce blurring at glancing angles
+        texture.anisotropy = 16;
+
+        // create a default (white) Basic material
+        const material = new THREE.MeshStandardMaterial({ 
+            // color: 0x800080,
+            transparent: false,
+            opacity: 1,
+            map: texture,
+        });
+
+        // create a Mesh containing the geometry and material
+        const mesh = new THREE.Mesh(geometry, material);
+
+        // add the mesh to the scene
+        MY_THREE.addToScene(mesh, (object) => {
+            object.rotation.x += 0.01;
+            object.rotation.y += 0.01;
+            object.rotation.z += 0.01;
+        });
+
+        MY_THREE.animate();
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ground</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+    <link rel="stylesheet" href="style/style.css" />
+    <script src="https://threejs.org/build/three.js"></script>
+    <script src="js/webGL.js"></script>
+    <script src="js/orbitControls.js"></script>
+    <script src="js/physics/ammo.js"></script>
+    <script src="js/physics/ConvexGeometry.js"></script>
+    <script src="js/physics/ConvexObjectBreaker.js"></script>
+    <script src="js/physics/QuickHull.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Ground</h1>
+    </header>
+    <main>
+        <div id="scene-container"></div>
+    </main>
+    <script src="js/myThreeWithPhysics.js"></script>
+    <script>
+        MY_THREE.initGraphics({
+            cameraPos: { x: 60, y: 30, z: 60 },
+        });
+        MY_THREE.initPhysics();
+
+        // ground
+        const pos = new THREE.Vector3();
+        pos.set(0, -0.5, 0);
+
+		const quat = new THREE.Quaternion();
+        quat.set(0, 0, 0, 1);
+
+        // Load a texture. See the note in chapter 4 on working locally, or the page
+        // https://threejs.org/docs/#manual/introduction/How-to-run-things-locally
+        // if you run into problems here
+        const texture = MY_THREE.textureLoader.load('images/grid.png', (texture) => {
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(40, 40);
+        });
+
+        // set the "color space" of the texture
+        texture.encoding = THREE.sRGBEncoding;
+
+        // reduce blurring at glancing angles
+        texture.anisotropy = 16;
+
+        // create a default (white) Basic material
+        const material = new THREE.MeshStandardMaterial({ 
+            // color: 0x800080,
+            transparent: false,
+            opacity: 1,
+            map: texture,
+        });
+
+		const ground = MY_THREE.createParalellepipedWithPhysics(
+            40, 1, 40, 0, pos, quat, material);
+
+        MY_THREE.animate();
+    </script>
+</body>
+</html>

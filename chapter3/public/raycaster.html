@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Raycaster</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+    <link rel="stylesheet" href="style/style.css" />
+    <script src="https://threejs.org/build/three.js"></script>
+    <script src="js/webGL.js"></script>
+    <script src="js/orbitControls.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Raycaster</h1>
+    </header>
+    <main>
+        <div id="scene-container"></div>
+    </main>
+    <script src="js/myThree.js"></script>
+    <script>
+        MY_THREE.initGraphics({
+            cameraPos: { x: 0, y: 0, z: 10 },
+        });
+
+        // create a geometry
+        const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
+
+        // create a default (white) Basic material
+        const material1 = new THREE.MeshStandardMaterial({ 
+            color: 0x800080,
+            transparent: false,
+            opacity: 1,
+        });
+        const material2 = new THREE.MeshStandardMaterial({ 
+            color: 0x808000,
+            transparent: false,
+            opacity: 1,
+        });
+
+        // create a Mesh containing the geometry and material
+        const mesh1 = new THREE.Mesh(geometry, material1);
+        mesh1.position.x = -1;
+
+        const mesh2 = new THREE.Mesh(geometry, material2);
+        mesh2.position.x = 1;
+
+        // add the mesh to the scene
+        MY_THREE.addToScene(mesh1);
+        MY_THREE.addToScene(mesh2);
+
+        MY_THREE.animate();
+    </script>
+</body>
+</html>
