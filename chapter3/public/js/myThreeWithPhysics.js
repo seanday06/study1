@@ -4,9 +4,13 @@ const MY_THREE = {
     textureLoader: new THREE.TextureLoader(),
     clock: new THREE.Clock(),
     time: 0,
+    objectsToRemove: [],
 };
 let impactPoint = new THREE.Vector3();
 let impactNormal = new THREE.Vector3();
+for (let i = 0; i < 500; i++) {
+    MY_THREE.objectsToRemove[i] = null;
+}
 let numObjectsToRemove = 0;
 
 if (THREE.ConvexObjectBreaker) {
@@ -216,18 +220,35 @@ MY_THREE.createRigidBody = (object, physicsShape, mass, pos, quat, vel, angVel) 
     return body;
 };
 
-MY_THREE.createParalellepipedWithPhysics = (sx, sy, sz, mass, pos, quat, material) => {
+MY_THREE.createRigidBox = ({ pos, size, mass, quat }, material) => {
     const { createRigidBody } = MY_THREE;
 
+    const box = new THREE.Mesh(new THREE.BoxGeometry(size.x, size.y, size.z), material);
+    box.castShadow = true;
+    box.receiveShadow = true;
+    const shape = new Ammo.btBoxShape(new Ammo.btVector3(size.x * 0.5, size.y * 0.5, size.z * 0.5));
     const margin = 0.05;
-    const ground = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz, 1, 1, 1), material);
-    ground.castShadow = true;
-    ground.receiveShadow = true;
-    const shape = new Ammo.btBoxShape(new Ammo.btVector3(sx * 0.5, sy * 0.5, sz * 0.5));
     shape.setMargin(margin);
-    createRigidBody(ground, shape, mass, pos, quat);
+    createRigidBody(box, shape, mass, pos, quat);
 
-    return ground;
+    return box;
+};
+
+MY_THREE.createBreakableRigidBox = ({ pos, size, mass, quat }, material) => {
+    const {
+        scene,
+        convexBreaker,
+        createDebrisFromBreakableObject,
+    } = MY_THREE;
+
+    const geometry = new THREE.BoxBufferGeometry(size.x * 0.5, size.y * 0.5, size.z * 0.5);
+    const object = new THREE.Mesh(geometry, material);
+
+    object.position.copy(pos);
+    object.quaternion.copy(quat);
+    convexBreaker.prepareBreakableObject(object, mass, new THREE.Vector3(), new THREE.Vector3(), true);
+    createDebrisFromBreakableObject(object);
+    scene.add(object);
 };
 
 MY_THREE.createConvexHullPhysicsShape = (coords) => {
@@ -264,22 +285,12 @@ MY_THREE.createDebrisFromBreakableObject = (object) => {
     body.setUserPointer(btVecUserData);
 };
 
-MY_THREE.createObject = (mass, halfExtents, pos, quat, material) => {
-    const {
-        scene,
-        physicsWorld,
-        convexBreaker,
-        createDebrisFromBreakableObject,
-    } = MY_THREE;
+MY_THREE.removeDebris = (object) => {
+    const { scene, physicsWorld } = MY_THREE;
 
-    const object = new THREE.Mesh(
-        new THREE.BoxBufferGeometry(halfExtents.x * 2, halfExtents.y * 2, halfExtents.z * 2), material);
-    object.position.copy(pos);
-    object.quaternion.copy(quat);
-    convexBreaker.prepareBreakableObject(object, mass, new THREE.Vector3(), new THREE.Vector3(), true);
-    createDebrisFromBreakableObject(object);
-    scene.add(object);
-};
+    scene.remove(object);
+    physicsWorld.removeRigidBody(object.userData.physicsBody);
+}
 
 let transformAux1 = new Ammo.btTransform();
 
@@ -340,37 +351,37 @@ MY_THREE.updatePhysics = (deltaTime) => {
             }
         }
         // If no point has contact, abort
-        if ( ! contact ) {
+        if (!contact) {
             continue;
         }
-        /*
+        
         // Subdivision
         let fractureImpulse = 250;
         if ( breakable0 && !collided0 && maxImpulse > fractureImpulse ) {
-            const debris = convexBreaker.subdivideByImpact( threeObject0, impactPoint, impactNormal , 1, 2, 1.5 );
+            const debris = MY_THREE.convexBreaker.subdivideByImpact( threeObject0, impactPoint, impactNormal , 1, 2, 1.5 );
             const numObjects = debris.length;
             for ( let j = 0; j < numObjects; j++ ) {
-                createDebrisFromBreakableObject(debris[j]);
+                MY_THREE.createDebrisFromBreakableObject(debris[j]);
             }
-            objectsToRemove[ numObjectsToRemove++ ] = threeObject0;
+            MY_THREE.objectsToRemove[ numObjectsToRemove++ ] = threeObject0;
             userData0.collided = true;
         }
         if ( breakable1 && !collided1 && maxImpulse > fractureImpulse ) {
-            const debris = convexBreaker.subdivideByImpact( threeObject1, impactPoint, impactNormal , 1, 2, 1.5 );
+            const debris = MY_THREE.convexBreaker.subdivideByImpact( threeObject1, impactPoint, impactNormal , 1, 2, 1.5 );
             const numObjects = debris.length;
             for ( let j = 0; j < numObjects; j++ ) {
-                createDebrisFromBreakableObject(debris[j]);
+                MY_THREE.createDebrisFromBreakableObject(debris[j]);
             }
-            objectsToRemove[ numObjectsToRemove++ ] = threeObject1;
+            MY_THREE.objectsToRemove[ numObjectsToRemove++ ] = threeObject1;
             userData1.collided = true;
         }
-        */
+        
     }
-    /*
+    
     for ( let i = 0; i < numObjectsToRemove; i++ ) {
-        removeDebris( objectsToRemove[ i ] );
+        MY_THREE.removeDebris(MY_THREE.objectsToRemove[ i ] );
     }
-    */
+    
     numObjectsToRemove = 0;
 };
 

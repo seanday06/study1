@@ -58,8 +58,12 @@
             map: texture,
         });
 
-		const ground = MY_THREE.createParalellepipedWithPhysics(
-            40, 1, 40, 0, pos, quat, material);
+		const ground = MY_THREE.createRigidBox({ 
+            size: { x: 40, y: 1, z: 40 },
+            mass: 0,
+            pos,
+            quat,
+        }, material);
 
         MY_THREE.animate();
     </script>
