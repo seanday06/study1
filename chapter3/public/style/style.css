@@ -6,12 +6,13 @@ html, body {
 }
 
 body > header {
+    height: 80px;
     padding: 10px;
     overflow: hidden;
 }
 
 body > main {
-    height: 100%;
+    height: calc(100% - 100px);
 }
 
 #scene-container {

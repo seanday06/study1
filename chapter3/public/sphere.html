@@ -67,17 +67,30 @@
 
         // stone
         const stoneMass = 120;
-		const stoneHalfExtents = new THREE.Vector3(1, 2, 0.15);
-		const numStones = 3;
+		const numStones = 10;
 		quat.set(0, 0, 0, 1);
         for (let i = 0; i < numStones; i++) {
-            pos.set(0, 1 * i + 15, 0);
+            pos.set(0, 0, -5 + i * 2);
             MY_THREE.createBreakableRigidBox({
                 mass: stoneMass,
-                size: new THREE.Vector3(3, 0.5, 3),
+                size: new THREE.Vector3(5, 5, 0.75),
                 pos,
                 quat
             }, new THREE.MeshStandardMaterial({ color: 0x000099 }));
+        }			
+
+        // ball
+        const ballMass = 150;
+		const numBalls = 8;
+		quat.set(0, 0, 0, 1);
+        for (let i = 0; i < numBalls; i++) {
+            pos.set(i, 1 * i + 15, 0);
+            MY_THREE.createRigidSphere({
+                mass: ballMass,
+                size: { radius: 1, segments: 15 },
+                pos,
+                quat
+            }, new THREE.MeshStandardMaterial({ color: 0x000000 }));
         }			
 
         MY_THREE.animate();

@@ -66,13 +66,13 @@
         }, material);
 
         // stone
-        const stoneMass = 120;
+        const stoneMass = 200;
 		const stoneHalfExtents = new THREE.Vector3(1, 2, 0.15);
 		const numStones = 3;
 		quat.set(0, 0, 0, 1);
         for (let i = 0; i < numStones; i++) {
             pos.set(0, 1 * i + 15, 0);
-            MY_THREE.createBreakableRigidBox({
+            MY_THREE.createRigidBox({
                 mass: stoneMass,
                 size: new THREE.Vector3(3, 0.5, 3),
                 pos,

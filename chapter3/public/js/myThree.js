@@ -89,13 +89,12 @@ MY_THREE.initGraphics = (config = {}) => {
 
     const raycaster = new THREE.Raycaster();
     MY_THREE.raycaster = raycaster;
-    const mouse = new THREE.Vector2();
-    MY_THREE.mouse = mouse;
+    MY_THREE.mouse = new THREE.Vector2();
 
     const onMouseMove = (e) => {
         e.preventDefault();
-        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        MY_THREE.mouse.x = (e.offsetX / container.clientWidth) * 2 - 1;
+        MY_THREE.mouse.y = -(e.offsetY / container.clientHeight) * 2 + 1;
     }
 
     window.addEventListener('mousemove', onMouseMove, false);
@@ -113,37 +112,30 @@ MY_THREE.addToScene = (object, update) => {
 MY_THREE.render = () => {
     const { raycaster, mouse, camera, scene, renderer } = MY_THREE;
     let { hovered, hoveredColor } = MY_THREE;
-/*
+
     raycaster.setFromCamera(mouse, camera);
 
     // calculate objects intersecting the picking ray
     const intersects = raycaster.intersectObjects(scene.children);
+
     if (intersects.length === 1) {
-        if (hovered !== intersects[0].object) {
-            console.log('intersected', intersects);
-            console.log('intersected hovered', hovered);
-            if (hovered) {
-                hovered.material.color.set(hoveredColor);
+        if (MY_THREE.intersect != intersects[0].object) {
+            if (MY_THREE.intersect) {
+                MY_THREE.intersect.material.emissive.setHex(MY_THREE.intersect.currentHex);
             }
-            hovered = intersects[0].object;
-            if (!hovered.originalColor) {
-                hovered.originalColor = Object.assign({}, hovered.material.color);
-            }
-            // hoveredColor = Object.assign({}, hovered.material.color);
-            hovered.material.color.set(0xff0000);
-            MY_THREE.hovered = hovered;
-            // MY_THREE.hoveredColor = hoveredColor;
+
+            MY_THREE.intersect = intersects[0].object;
+            MY_THREE.intersect.currentHex = MY_THREE.intersect.material.emissive.getHex();
+            MY_THREE.intersect.material.emissive.setHex(0xff0000);
         }
-    } else {        
-        if (hovered) {
-            console.log('intersect none');
-            console.log('intersected hovered', hovered);
-            hovered.material.color.set(hovered.originalColor);
+    } else {
+        if (MY_THREE.intersect) {
+            MY_THREE.intersect.material.emissive.setHex(MY_THREE.intersect.currentHex);
         }
-        MY_THREE.hovered = hovered = null;
-        MY_THREE.hoveredColor = hoveredColor = null;
+
+        MY_THREE.intersect = null;
     }
-*/
+
     renderer.render(scene, camera);
 };
 

@@ -194,28 +194,34 @@ MY_THREE.createRigidBody = (object, physicsShape, mass, pos, quat, vel, angVel) 
     const transform = new Ammo.btTransform();
     transform.setIdentity();
     transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
-    transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
-    
+    transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));    
     const motionState = new Ammo.btDefaultMotionState(transform);
+
     const localInertia = new Ammo.btVector3(0, 0, 0);
     physicsShape.calculateLocalInertia(mass, localInertia);
+
     const rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, physicsShape, localInertia);
     const body = new Ammo.btRigidBody(rbInfo);
+
     body.setFriction(0.5);
+
     if (vel) {
         body.setLinearVelocity(new Ammo.btVector3(vel.x, vel.y, vel.z));
     }
     if (angVel) {
         body.setAngularVelocity(new Ammo.btVector3(angVel.x, angVel.y, angVel.z));
     }
+
     object.userData.physicsBody = body;
     object.userData.collided = false;
     scene.add(object);
+
     if (mass > 0) {
         rigidBodies.push(object);
         // Disable deactivation
         body.setActivationState(4);
     }
+
     physicsWorld.addRigidBody(body);
     return body;
 };
@@ -232,6 +238,20 @@ MY_THREE.createRigidBox = ({ pos, size, mass, quat }, material) => {
     createRigidBody(box, shape, mass, pos, quat);
 
     return box;
+};
+
+MY_THREE.createRigidSphere = ({ size, pos, mass, quat }, material) => {
+    const { createRigidBody } = MY_THREE;
+
+    const sphere = new THREE.Mesh(new THREE.SphereGeometry(size.radius, size.segments, size.segments), material);
+    sphere.castShadow = true;
+    sphere.receiveShadow = true;
+    const shape = new Ammo.btSphereShape(size.radius);
+    const margin = 0.05;
+    shape.setMargin(margin);
+    createRigidBody(sphere, shape, mass, pos, quat);
+
+    return sphere;
 };
 
 MY_THREE.createBreakableRigidBox = ({ pos, size, mass, quat }, material) => {
@@ -255,7 +275,7 @@ MY_THREE.createConvexHullPhysicsShape = (coords) => {
     const shape = new Ammo.btConvexHullShape();
     const tempBtVec3_1 = new Ammo.btVector3(0, 0, 0);
     for (let i = 0, il = coords.length; i < il; i+= 3) {
-        tempBtVec3_1.setValue(coords[ i ], coords[ i + 1 ], coords[ i + 2 ]);
+        tempBtVec3_1.setValue(coords[i], coords[i + 1], coords[i + 2]);
         let lastOne = (i >= (il - 3));
         shape.addPoint(tempBtVec3_1, lastOne);
     }
