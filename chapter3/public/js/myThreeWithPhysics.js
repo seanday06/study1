@@ -17,6 +17,8 @@ if (THREE.ConvexObjectBreaker) {
     MY_THREE.convexBreaker = new THREE.ConvexObjectBreaker();
 }
 
+//const quat = new THREE.Quaternion();
+
 MY_THREE.initGraphics = (config = {}) => {
     const { cameraPos } = config;
 
@@ -93,16 +95,42 @@ MY_THREE.initGraphics = (config = {}) => {
 
     const raycaster = new THREE.Raycaster();
     MY_THREE.raycaster = raycaster;
-    const mouse = new THREE.Vector2();
-    MY_THREE.mouse = mouse;
+    MY_THREE.mouse = new THREE.Vector2();
 
     const onMouseMove = (e) => {
         e.preventDefault();
-        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        MY_THREE.mouse.x = (e.offsetX / container.clientWidth) * 2 - 1;
+        MY_THREE.mouse.y = -(e.offsetY / container.clientHeight) * 2 + 1;
     }
 
     window.addEventListener('mousemove', onMouseMove, false);
+
+    MY_THREE.rayPos = new THREE.Vector3();
+
+    const onMouseDown = (e) => {
+        MY_THREE.rayPos.set(
+            (e.offsetX / container.clientWidth) * 2 - 1,
+            -(e.offsetY / container.clientHeight) * 2 + 1
+        );
+
+        raycaster.setFromCamera(MY_THREE.rayPos, camera);
+        
+        pos.copy(raycaster.ray.direction);
+        pos.add(raycaster.ray.origin);
+        quat.set(0, 0, 0, 1);
+
+        const body = MY_THREE.createRigidSphere({
+            mass: 100,
+            size: { radius: 0.25, segments: 16 },
+            pos,
+            quat,
+        }, new THREE.MeshStandardMaterial({ color: 0x000000 }));
+
+        pos.copy(raycaster.ray.direction);
+        pos.multiplyScalar(100);
+        body.setLinearVelocity(new Ammo.btVector3(pos.x, pos.y, pos.z));
+    }
+    window.addEventListener('mousedown', onMouseDown, false);
 };
 
 MY_THREE.addToScene = (object, update) => {
@@ -115,33 +143,31 @@ MY_THREE.addToScene = (object, update) => {
 };
 
 MY_THREE.render = () => {
-    const { raycaster, mouse, camera, scene, renderer } = MY_THREE;
+    const { raycaster, mouse, camera, rigidBodies, scene, renderer } = MY_THREE;
     let { hovered, hoveredColor } = MY_THREE;
 
-    /*
     raycaster.setFromCamera(mouse, camera);
 
     // calculate objects intersecting the picking ray
-    const intersects = raycaster.intersectObjects(scene.children);
-    if (intersects.length > 0) {
-        if (hovered !== intersects[0].object) {
-            if (hovered) {
-                hovered.material.color.set(hoveredColor);
+    const intersects = raycaster.intersectObjects(rigidBodies);
+
+    if (intersects.length === 1) {
+        if (MY_THREE.intersect != intersects[0].object) {
+            if (MY_THREE.intersect) {
+                MY_THREE.intersect.material.emissive.setHex(MY_THREE.intersect.currentHex);
             }
-            hovered = intersects[0].object;
-            hoveredColor = Object.assign({}, hovered.material.color);
-            hovered.material.color.set(0xff0000);
-            MY_THREE.hovered = hovered;
-            MY_THREE.hoveredColor = hoveredColor;
+
+            MY_THREE.intersect = intersects[0].object;
+            MY_THREE.intersect.currentHex = MY_THREE.intersect.material.emissive.getHex();
+            MY_THREE.intersect.material.emissive.setHex(0xff0000);
         }
     } else {
-        if (hovered) {
-            hovered.material.color.set(hoveredColor);
+        if (MY_THREE.intersect) {
+            MY_THREE.intersect.material.emissive.setHex(MY_THREE.intersect.currentHex);
         }
-        MY_THREE.hovered = hovered = null;
-        MY_THREE.hoveredColor = hoveredColor = null;
+
+        MY_THREE.intersect = null;
     }
-    */
 
     let deltaTime = MY_THREE.clock.getDelta();
     MY_THREE.updatePhysics(deltaTime);
@@ -226,7 +252,7 @@ MY_THREE.createRigidBody = (object, physicsShape, mass, pos, quat, vel, angVel) 
     return body;
 };
 
-MY_THREE.createRigidBox = ({ pos, size, mass, quat }, material) => {
+MY_THREE.createRigidBox = ({ pos, size, mass, quat, velocity }, material) => {
     const { createRigidBody } = MY_THREE;
 
     const box = new THREE.Mesh(new THREE.BoxGeometry(size.x, size.y, size.z), material);
@@ -235,12 +261,10 @@ MY_THREE.createRigidBox = ({ pos, size, mass, quat }, material) => {
     const shape = new Ammo.btBoxShape(new Ammo.btVector3(size.x * 0.5, size.y * 0.5, size.z * 0.5));
     const margin = 0.05;
     shape.setMargin(margin);
-    createRigidBody(box, shape, mass, pos, quat);
-
-    return box;
+    return createRigidBody(box, shape, mass, pos, quat, velocity);
 };
 
-MY_THREE.createRigidSphere = ({ size, pos, mass, quat }, material) => {
+MY_THREE.createRigidSphere = ({ size, pos, mass, quat, velocity }, material) => {
     const { createRigidBody } = MY_THREE;
 
     const sphere = new THREE.Mesh(new THREE.SphereGeometry(size.radius, size.segments, size.segments), material);
@@ -249,9 +273,7 @@ MY_THREE.createRigidSphere = ({ size, pos, mass, quat }, material) => {
     const shape = new Ammo.btSphereShape(size.radius);
     const margin = 0.05;
     shape.setMargin(margin);
-    createRigidBody(sphere, shape, mass, pos, quat);
-
-    return sphere;
+    return createRigidBody(sphere, shape, mass, pos, quat, velocity);
 };
 
 MY_THREE.createBreakableRigidBox = ({ pos, size, mass, quat }, material) => {

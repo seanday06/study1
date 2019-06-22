@@ -79,20 +79,6 @@
             }, new THREE.MeshStandardMaterial({ color: 0x000099 }));
         }			
 
-        // ball
-        const ballMass = 150;
-		const numBalls = 8;
-		quat.set(0, 0, 0, 1);
-        for (let i = 0; i < numBalls; i++) {
-            pos.set(i, 1 * i + 15, 0);
-            MY_THREE.createRigidSphere({
-                mass: ballMass,
-                size: { radius: 1, segments: 15 },
-                pos,
-                quat
-            }, new THREE.MeshStandardMaterial({ color: 0x000000 }));
-        }			
-
         MY_THREE.animate();
     </script>
 </body>
