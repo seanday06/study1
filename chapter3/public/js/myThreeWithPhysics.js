@@ -20,7 +20,7 @@ if (THREE.ConvexObjectBreaker) {
 //const quat = new THREE.Quaternion();
 
 MY_THREE.initGraphics = (config = {}) => {
-    const { cameraPos } = config;
+    const { cameraPos, bullet } = config;
 
     // get scene container element
     const container = document.querySelector('#scene-container');
@@ -105,32 +105,35 @@ MY_THREE.initGraphics = (config = {}) => {
 
     window.addEventListener('mousemove', onMouseMove, false);
 
-    MY_THREE.rayPos = new THREE.Vector3();
+    if (bullet && bullet.show) {
+        const { mass, radius, segments } = bullet;
+        MY_THREE.rayPos = new THREE.Vector3();
 
-    const onMouseDown = (e) => {
-        MY_THREE.rayPos.set(
-            (e.offsetX / container.clientWidth) * 2 - 1,
-            -(e.offsetY / container.clientHeight) * 2 + 1
-        );
+        const onMouseDown = (e) => {
+            MY_THREE.rayPos.set(
+                (e.offsetX / container.clientWidth) * 2 - 1,
+                -(e.offsetY / container.clientHeight) * 2 + 1
+            );
 
-        raycaster.setFromCamera(MY_THREE.rayPos, camera);
-        
-        pos.copy(raycaster.ray.direction);
-        pos.add(raycaster.ray.origin);
-        quat.set(0, 0, 0, 1);
+            raycaster.setFromCamera(MY_THREE.rayPos, camera);
+            
+            pos.copy(raycaster.ray.direction);
+            pos.add(raycaster.ray.origin);
+            quat.set(0, 0, 0, 1);
 
-        const body = MY_THREE.createRigidSphere({
-            mass: 100,
-            size: { radius: 0.25, segments: 16 },
-            pos,
-            quat,
-        }, new THREE.MeshStandardMaterial({ color: 0x000000 }));
+            const body = MY_THREE.createRigidSphere({
+                mass,
+                size: { radius, segments },
+                pos,
+                quat,
+            }, new THREE.MeshStandardMaterial({ color: 0x000000 }));
 
-        pos.copy(raycaster.ray.direction);
-        pos.multiplyScalar(100);
-        body.setLinearVelocity(new Ammo.btVector3(pos.x, pos.y, pos.z));
-    }
-    window.addEventListener('mousedown', onMouseDown, false);
+            pos.copy(raycaster.ray.direction);
+            pos.multiplyScalar(50);
+            body.setLinearVelocity(new Ammo.btVector3(pos.x, pos.y, pos.z));
+        }
+        window.addEventListener('mousedown', onMouseDown, false);
+    } 
 };
 
 MY_THREE.addToScene = (object, update) => {
@@ -202,7 +205,7 @@ MY_THREE.initPhysics = (config = { gravity: 9.8 }) => {
     MY_THREE.dispatcher = dispatcher;
 };
 
-MY_THREE.createRigidBody = (object, physicsShape, mass, pos, quat, vel, angVel) => {
+MY_THREE.createRigidBody = (object, physicsShape, mass, pos, quat, vel, angVel, friction = 0.5) => {
     const { scene, physicsWorld, rigidBodies } = MY_THREE;
 
     if (pos) {
@@ -229,7 +232,7 @@ MY_THREE.createRigidBody = (object, physicsShape, mass, pos, quat, vel, angVel) 
     const rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, physicsShape, localInertia);
     const body = new Ammo.btRigidBody(rbInfo);
 
-    body.setFriction(0.5);
+    body.setFriction(friction);
 
     if (vel) {
         body.setLinearVelocity(new Ammo.btVector3(vel.x, vel.y, vel.z));
@@ -252,7 +255,7 @@ MY_THREE.createRigidBody = (object, physicsShape, mass, pos, quat, vel, angVel) 
     return body;
 };
 
-MY_THREE.createRigidBox = ({ pos, size, mass, quat, velocity }, material) => {
+MY_THREE.createRigidBox = ({ pos, size, mass, quat, velocity, friction }, material) => {
     const { createRigidBody } = MY_THREE;
 
     const box = new THREE.Mesh(new THREE.BoxGeometry(size.x, size.y, size.z), material);
@@ -264,7 +267,7 @@ MY_THREE.createRigidBox = ({ pos, size, mass, quat, velocity }, material) => {
     return createRigidBody(box, shape, mass, pos, quat, velocity);
 };
 
-MY_THREE.createRigidSphere = ({ size, pos, mass, quat, velocity }, material) => {
+MY_THREE.createRigidSphere = ({ size, pos, mass, quat, velocity, friction }, material) => {
     const { createRigidBody } = MY_THREE;
 
     const sphere = new THREE.Mesh(new THREE.SphereGeometry(size.radius, size.segments, size.segments), material);
@@ -276,7 +279,7 @@ MY_THREE.createRigidSphere = ({ size, pos, mass, quat, velocity }, material) => 
     return createRigidBody(sphere, shape, mass, pos, quat, velocity);
 };
 
-MY_THREE.createBreakableRigidBox = ({ pos, size, mass, quat }, material) => {
+MY_THREE.createBreakableRigidBox = ({ pos, size, mass, quat, friction }, material) => {
     const {
         scene,
         convexBreaker,

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sphere</title>
+    <title>Container</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
     <link rel="stylesheet" href="style/style.css" />
     <script src="https://threejs.org/build/three.js"></script>
@@ -16,7 +16,7 @@
 </head>
 <body>
     <header>
-        <h1>Sphere</h1>
+        <h1>Container</h1>
     </header>
     <main>
         <div id="scene-container"></div>
@@ -30,7 +30,7 @@
                 mass: 100,
                 radius: 1,
                 segments: 16,
-            }
+            },
         });
         MY_THREE.initPhysics();
 
@@ -69,19 +69,66 @@
             mass: 0,
             pos,
             quat,
+            friction: 0,
         }, material);
 
-        // stone
-        const stoneMass = 120;
-		const numStones = 10;
+        const wall1Pos = new THREE.Vector3();
+        wall1Pos.set(0, -0.5, -20);
+
+        const wall2Pos = new THREE.Vector3();
+        wall2Pos.set(-20, -0.5, 0);
+
+        const wall3Pos = new THREE.Vector3();
+        wall3Pos.set(0, -0.5, 20);
+
+        const wall4Pos = new THREE.Vector3();
+        wall4Pos.set(20, -0.5, 0);
+
+        const wall1 = MY_THREE.createRigidBox({
+            size: { x: 40, y: 5, z: 1},
+            mass: 0,
+            pos: wall1Pos,
+            quat,
+            friction: 0,
+        }, material);
+
+        const wall2 = MY_THREE.createRigidBox({
+            size: { x: 1, y: 5, z: 40},
+            mass: 0,
+            pos: wall2Pos,
+            quat,
+            friction: 0,
+        }, material);
+
+        const wall3 = MY_THREE.createRigidBox({
+            size: { x: 40, y: 5, z: 1},
+            mass: 0,
+            pos: wall3Pos,
+            quat,
+            friction: 0,
+        }, material);
+
+        const wall4 = MY_THREE.createRigidBox({
+            size: { x: 1, y: 5, z: 40},
+            mass: 0,
+            pos: wall4Pos,
+            quat,
+            friction: 0,
+        }, material);
+
+
+        // ball
+        const ballMass = 100;
+		const numBalls = 4;
 		quat.set(0, 0, 0, 1);
-        for (let i = 0; i < numStones; i++) {
+        for (let i = 0; i < numBalls; i++) {
             pos.set(0, 0, -5 + i * 2);
-            MY_THREE.createBreakableRigidBox({
-                mass: stoneMass,
-                size: new THREE.Vector3(5, 5, 0.75),
+            MY_THREE.createRigidSphere({
+                mass: ballMass,
+                size: { radius: 1, segments: 16 },
                 pos,
-                quat
+                quat,
+                friction: 0,
             }, new THREE.MeshStandardMaterial({ color: 0x000099 }));
         }			
 
