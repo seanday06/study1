@@ -119,14 +119,26 @@ MY_THREE.initGraphics = (config = {}) => {
             
             pos.copy(raycaster.ray.direction);
             pos.add(raycaster.ray.origin);
-            quat.set(0, 0, 0, 1);
-
+            quat.set(3, 4, 0, 1);
+/*
             const body = MY_THREE.createRigidSphere({
                 mass,
                 size: { radius, segments },
                 pos,
                 quat,
-            }, new THREE.MeshStandardMaterial({ color: 0x000000 }));
+                friction: 0,
+            }, new THREE.MeshStandardMaterial({ color: 0xeeeeee }));
+            body.setRestitution(1);
+*/
+            const body = MY_THREE.createRigidCylinder({
+                mass,
+                size: { radiusTop: 0.12, radiusBottom: 0.15, height: 10, segments: 16 },
+                pos,
+                quat,
+                friction: 0,
+            }, new THREE.MeshStandardMaterial({ color: 0x999999 }));
+            body.setRestitution(1);
+
 
             pos.copy(raycaster.ray.direction);
             pos.multiplyScalar(50);
@@ -277,6 +289,19 @@ MY_THREE.createRigidSphere = ({ size, pos, mass, quat, velocity, friction }, mat
     const margin = 0.05;
     shape.setMargin(margin);
     return createRigidBody(sphere, shape, mass, pos, quat, velocity);
+};
+
+MY_THREE.createRigidCylinder = ({ size, pos, mass, quat, velocity, friction }, material) => {
+    const { createRigidBody } = MY_THREE;
+
+    const cylinder = new THREE.Mesh(new THREE.CylinderGeometry(size.radiusTop, size.radiusBottom, size.height, size.segments), material);
+    cylinder.castShadow = true;
+    cylinder.receiveShadow = true;
+    const v3 = new Ammo.btVector3(size.height, size.radiusTop, size.radiusBottom);
+    const shape = new Ammo.btCylinderShape(size.radius);
+    const margin = 0.05;
+    shape.setMargin(margin);
+    return createRigidBody(cylinder, shape, mass, pos, quat, velocity);
 };
 
 MY_THREE.createBreakableRigidBox = ({ pos, size, mass, quat, friction }, material) => {

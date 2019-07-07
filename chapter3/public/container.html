@@ -24,7 +24,7 @@
     <script src="js/myThreeWithPhysics.js"></script>
     <script>
         MY_THREE.initGraphics({
-            cameraPos: { x: 60, y: 30, z: 60 },
+            cameraPos: { x: 30, y: 10, z: 0 },
             bullet: {
                 show: true,
                 mass: 100,
@@ -65,7 +65,7 @@
         });
 
 		const ground = MY_THREE.createRigidBox({ 
-            size: { x: 40, y: 1, z: 40 },
+            size: { x: 25.4, y: 1, z: 12.7 },
             mass: 0,
             pos,
             quat,
@@ -73,19 +73,19 @@
         }, material);
 
         const wall1Pos = new THREE.Vector3();
-        wall1Pos.set(0, -0.5, -20);
+        wall1Pos.set(0, -0.5, -6.35);
 
         const wall2Pos = new THREE.Vector3();
-        wall2Pos.set(-20, -0.5, 0);
+        wall2Pos.set(-12.7, -0.5, 0);
 
         const wall3Pos = new THREE.Vector3();
-        wall3Pos.set(0, -0.5, 20);
+        wall3Pos.set(0, -0.5, 6.35);
 
         const wall4Pos = new THREE.Vector3();
-        wall4Pos.set(20, -0.5, 0);
+        wall4Pos.set(12.7, -0.5, 0);
 
         const wall1 = MY_THREE.createRigidBox({
-            size: { x: 40, y: 5, z: 1},
+            size: { x: 25.4, y: 1.88, z: 1},
             mass: 0,
             pos: wall1Pos,
             quat,
@@ -93,7 +93,7 @@
         }, material);
 
         const wall2 = MY_THREE.createRigidBox({
-            size: { x: 1, y: 5, z: 40},
+            size: { x: 1, y: 1.88, z: 12.7},
             mass: 0,
             pos: wall2Pos,
             quat,
@@ -101,7 +101,7 @@
         }, material);
 
         const wall3 = MY_THREE.createRigidBox({
-            size: { x: 40, y: 5, z: 1},
+            size: { x: 25.4, y: 1.88, z: 1},
             mass: 0,
             pos: wall3Pos,
             quat,
@@ -109,13 +109,17 @@
         }, material);
 
         const wall4 = MY_THREE.createRigidBox({
-            size: { x: 1, y: 5, z: 40},
+            size: { x: 1, y: 1.88, z: 12.7},
             mass: 0,
             pos: wall4Pos,
             quat,
             friction: 0,
         }, material);
 
+        wall1.setRestitution(1);
+        wall2.setRestitution(1);
+        wall3.setRestitution(1);
+        wall4.setRestitution(1);
 
         // ball
         const ballMass = 100;
@@ -123,13 +127,15 @@
 		quat.set(0, 0, 0, 1);
         for (let i = 0; i < numBalls; i++) {
             pos.set(0, 0, -5 + i * 2);
-            MY_THREE.createRigidSphere({
+            const color = i < 2 ? 0xff0000 : (i < 3) ? 0xffff00 : 0xeeeeee;
+            const ball = MY_THREE.createRigidSphere({
                 mass: ballMass,
-                size: { radius: 1, segments: 16 },
+                size: { radius: 0.3275, segments: 16 },
                 pos,
                 quat,
                 friction: 0,
-            }, new THREE.MeshStandardMaterial({ color: 0x000099 }));
+            }, new THREE.MeshStandardMaterial({ color }));
+            ball.setRestitution(1);
         }			
 
         MY_THREE.animate();
