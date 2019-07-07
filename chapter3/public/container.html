@@ -28,7 +28,7 @@
             bullet: {
                 show: true,
                 mass: 100,
-                radius: 1,
+                radius: 0.3,
                 segments: 16,
             },
         });
@@ -49,7 +49,7 @@
             texture.wrapT = THREE.RepeatWrapping;
             texture.repeat.set(40, 40);
         });
-
+        
         // set the "color space" of the texture
         texture.encoding = THREE.sRGBEncoding;
 
@@ -58,10 +58,10 @@
 
         // create a default (white) Basic material
         const material = new THREE.MeshStandardMaterial({ 
-            color: 0xffffff,
+            color: 0x2357f3,
             transparent: false,
             opacity: 1,
-            map: texture,
+            // map: texture,
         });
 
 		const ground = MY_THREE.createRigidBox({ 
@@ -84,13 +84,20 @@
         const wall4Pos = new THREE.Vector3();
         wall4Pos.set(12.7, -0.5, 0);
 
+        const wallMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x333333,
+            transparent: false,
+            opacity: 1,
+            // map: texture,
+        });
+
         const wall1 = MY_THREE.createRigidBox({
-            size: { x: 25.4, y: 1.88, z: 1},
+            size: { x: 26.4, y: 1.88, z: 1},
             mass: 0,
             pos: wall1Pos,
             quat,
             friction: 0,
-        }, material);
+        }, wallMaterial);
 
         const wall2 = MY_THREE.createRigidBox({
             size: { x: 1, y: 1.88, z: 12.7},
@@ -98,15 +105,15 @@
             pos: wall2Pos,
             quat,
             friction: 0,
-        }, material);
+        }, wallMaterial);
 
         const wall3 = MY_THREE.createRigidBox({
-            size: { x: 25.4, y: 1.88, z: 1},
+            size: { x: 26.4, y: 1.88, z: 1},
             mass: 0,
             pos: wall3Pos,
             quat,
             friction: 0,
-        }, material);
+        }, wallMaterial);
 
         const wall4 = MY_THREE.createRigidBox({
             size: { x: 1, y: 1.88, z: 12.7},
@@ -114,7 +121,7 @@
             pos: wall4Pos,
             quat,
             friction: 0,
-        }, material);
+        }, wallMaterial);
 
         wall1.setRestitution(1);
         wall2.setRestitution(1);

@@ -120,7 +120,7 @@ MY_THREE.initGraphics = (config = {}) => {
             pos.copy(raycaster.ray.direction);
             pos.add(raycaster.ray.origin);
             quat.set(3, 4, 0, 1);
-/*
+
             const body = MY_THREE.createRigidSphere({
                 mass,
                 size: { radius, segments },
@@ -129,19 +129,21 @@ MY_THREE.initGraphics = (config = {}) => {
                 friction: 0,
             }, new THREE.MeshStandardMaterial({ color: 0xeeeeee }));
             body.setRestitution(1);
-*/
+
+/*
             const body = MY_THREE.createRigidCylinder({
                 mass,
-                size: { radiusTop: 0.12, radiusBottom: 0.15, height: 10, segments: 16 },
+                // size: { radiusTop: 0.12, radiusBottom: 0.15, height: 10, segments: 16 },
+                size: { radiusTop: 0.3, radiusBottom: 0.3, height: 1, segments: 16 },
                 pos,
                 quat,
                 friction: 0,
             }, new THREE.MeshStandardMaterial({ color: 0x999999 }));
             body.setRestitution(1);
-
+*/
 
             pos.copy(raycaster.ray.direction);
-            pos.multiplyScalar(50);
+            pos.multiplyScalar(10);
             body.setLinearVelocity(new Ammo.btVector3(pos.x, pos.y, pos.z));
         }
         window.addEventListener('mousedown', onMouseDown, false);
