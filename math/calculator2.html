@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>그림 계산기</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+    <h1>그림 계산기</h1>
+    <div>
+        <p id="result"></p>
+    </div>
+    <div class="numbers">
+        <button onclick="onNumber(1);"><img src="images/1.jpg" /></button>
+        <button onclick="onNumber(2);"><img src="images/2.jpg" /></button>
+        <button onclick="onNumber(3);"><img src="images/3.jpg" /></button>
+        <button onclick="onNumber(4);"><img src="images/4.jpg" /></button>
+        <button onclick="onNumber(5);"><img src="images/5.jpg" /></button>
+        <button onclick="onNumber(6);"><img src="images/6.jpg" /></button>
+        <button onclick="onNumber(7);"><img src="images/7.jpg" /></button>
+        <button onclick="onNumber(8);"><img src="images/8.jpg" /></button>
+        <button onclick="onNumber(9);"><img src="images/9.jpg" /></button>
+        <button onclick="onNumber(0);"><img src="images/0.jpg" /></button>
+        <button onclick="onNumber('.');"><img src="images/dot.png" /></button>
+    </div>
+    <div class="operators">
+        <button onclick="onOperation('+');"><img src="images/plus.jpg" /></button>
+        <button onclick="onOperation('-');"><img src="images/minus.jpg" /></button>
+        <button onclick="onOperation('*');"><img src="images/multiply.jpg" /></button>
+        <button onclick="onOperation('/');"><img src="images/divide.jpg" /></button>
+        <button onclick="onOperation('=');"><img src="images/equal.jpg" /></button>
+        <button onclick="onOperation('back');"><img src="images/back.jpg" /></button>
+        <button onclick="onOperation('clear');"><img src="images/reset.jpg" /></button>
+    </div>
+    <script src="js/calculate.js"></script>
+</body>
+</html>
