@@ -12,7 +12,7 @@
         <h1>Olympiad: 방배정히기</h1>
     </header>
     <main>
-        <form id="myForm" onsubmit="onSubmit(); return false;">
+        <form id="myForm" onsubmit="onSubmit();">
             <div>
                 <label>입력</label>
                 <input type="text" name="inputs" />
@@ -26,16 +26,29 @@
         <hr />
         <p>결과:</p>
         <p id="results">None</p>
+        <input id="output" type="text" name="output" value="결과" />
+
     </main>
     <script>
         onSubmit = () => {
             const form = document.getElementById('myForm');
             const inputs = form.inputs && form.inputs.value;
 
+            console.log('inputs', inputs);
+            console.log('inputs split', inputs.split(' '));
+            console.log('inputs split numbers', inputs.split(' ').map(doc => parseInt(doc)));
+
             const [a, b, c, n] = inputs.split(' ').map(doc => parseInt(doc));
 
+            console.log('inputs array', [a, b, c, d]);
+            alert('ok');
+/*            
             const results = document.getElementById('results');
             results.innerHTML = `a: ${a}, b: ${b}, c: ${c}, n: ${n}`;
+
+            const output = document.getElementById('output');
+            output.value = a;
+*/            
         }
     </script>
 </body>
