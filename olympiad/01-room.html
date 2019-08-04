@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>방배정하기</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+    <link rel="stylesheet" href="style/style.css" />
+</head>
+<body>
+    <header>
+        <h1>Olympiad: 방배정히기</h1>
+    </header>
+    <main>
+        <form id="myForm" onsubmit="onSubmit(); return false;">
+            <div>
+                <label>입력</label>
+                <input type="text" name="inputs" />
+                <p>방의 인원수 3개, 전체 인원수를 순서대로 입력한다. <br>예) 3 4 5 119</p>
+            </div>
+
+            <div>
+                <button type="submit">확인</button>
+            </div>
+        </form>
+        <hr />
+        <p>결과:</p>
+        <p id="results">None</p>
+    </main>
+    <script>
+        onSubmit = () => {
+            const form = document.getElementById('myForm');
+            const inputs = form.inputs && form.inputs.value;
+
+            const [a, b, c, n] = inputs.split(' ').map(doc => parseInt(doc));
+
+            const results = document.getElementById('results');
+            results.innerHTML = `a: ${a}, b: ${b}, c: ${c}, n: ${n}`;
+        }
+    </script>
+</body>
+</html>
